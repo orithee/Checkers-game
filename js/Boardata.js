@@ -64,6 +64,13 @@ class BoardData {
     return this.getPiece(row, col) === undefined;
   }
 
+  isEnemy(row, col) {
+    //  If there is enemy piece in the cell - return true:
+    let piece = this.getPiece(row, col);
+    console.log(piece);
+    return piece.player !== game.currentPlayer;
+  }
+
   isPlayer(row, col, player) {
     //  If there is piece with the same player in this cell - return true. else - false :
     const piece = this.getPiece(row, col);

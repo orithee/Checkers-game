@@ -23,15 +23,14 @@ function initGame() {
 
 function onCellClick(row, col) {
   // Remove the alert "notYourTurn":
-  //   notYourTurn.remove();
+  notYourTurn.remove();
 
   // selectedPiece - (selected in previous click) The current selected piece.
   //   (row, col)- the current click:
   if (selectedPiece !== undefined && game.tryMove(selectedPiece, row, col)) {
     selectedPiece = undefined;
-    // createChessBoard(game.boardData);
+    game.clearBoard();
     //TODO: checking if the next player can do somthing :
-    // game.checkingIfCheck();
     // game.checkingIfMatte();
   } else {
     game.clearBoard();

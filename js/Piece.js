@@ -13,7 +13,41 @@ class Piece {
     return WHITE_PLAYER;
   }
 
-  //   TODO: eatingDirections !!
+  getEatingDirections() {
+    let moves;
+
+    if (this.type === PAWN) {
+      moves = this.getPawnEatingDirections();
+    }
+    return this.filteredMoves(moves);
+  }
+
+  getPawnEatingDirections() {
+    let result = [];
+    let direction = 1;
+    if (this.player === BLACK_PLAYER) {
+      direction = -1;
+    }
+
+    if (
+      !boardData.isEmpty(this.row + direction, this.col - 1) &&
+      boardData.isEnemy(this.row + direction, this.col - 1) &&
+      boardData.isEmpty(this.row + direction * 2, this.col - 1 * 2)
+    ) {
+      console.log("this enemy");
+      result.push([this.row + direction * 2, this.col - 1 * 2]);
+    }
+    if (
+      !boardData.isEmpty(this.row + direction, this.col + 1) &&
+      boardData.isEnemy(this.row + direction, this.col + 1) &&
+      boardData.isEmpty(this.row + direction * 2, this.col + 1 * 2)
+    ) {
+      console.log("this enemy");
+      result.push([this.row + direction * 2, this.col + 1 * 2]);
+    }
+
+    return result;
+  }
 
   getPossibleMoves() {
     // Find the possibleMoves:
@@ -42,6 +76,7 @@ class Piece {
     }
     return filteredMoves;
   }
+
   getPawnMoves() {
     //   TODO: checking if he can eat some piece. if he can - exsit the function.
     let result = [];

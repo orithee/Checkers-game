@@ -24,13 +24,13 @@ class Game {
     console.log(piece);
 
     // If this is not the turn of the player who clicked - exit the function:
-    // if (piece !== undefined && this.currentPlayer !== piece.player) {
-    //   notYourTurn.classList.add("notYourTurn");
-    //   notYourTurn.textContent = "Not your turn";
-    //   table.appendChild(notYourTurn);
-    //   selectedPiece = undefined;
-    //   return;
-    // }
+    if (piece !== undefined && this.currentPlayer !== piece.player) {
+      notYourTurn.classList.add("notYourTurn");
+      notYourTurn.textContent = "Not your turn";
+      table.appendChild(notYourTurn);
+      selectedPiece = undefined;
+      return;
+    }
 
     // Show possible moves:
     if (piece !== undefined) {
@@ -39,8 +39,9 @@ class Game {
       let possibleMoves;
       //   console.log(possibleMoves);
       // TODO: if possibleMoves have no possible move - so do the else:
-      //   possibleMoves = piece.getEatingDirections();
-      if (possibleMoves !== undefined) {
+      possibleMoves = piece.getEatingDirections();
+      console.log(possibleMoves[0]);
+      if (possibleMoves[0] !== undefined) {
         for (let possibleMove of possibleMoves) {
           const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
           cell.classList.add("possible-move");

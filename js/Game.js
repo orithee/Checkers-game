@@ -53,7 +53,6 @@ class Game {
         }
       }
     }
-    // TODO: if
 
     table.rows[row].cells[col].classList.add("selected");
     selectedPiece = piece;
@@ -61,13 +60,21 @@ class Game {
 
   tryMove(piece, row, col) {
     // Check if the click for movement is valid:
+    // TODO: merge the possible moves for more clearly...
     const possibleMoves = piece.getPossibleMoves(boardData);
     for (const possibleMove of possibleMoves) {
       if (possibleMove[0] === row && possibleMove[1] === col) {
         // There is a legal move, so do this:
-        const removedPiece = this.boardData.removePiece(row, col);
-        let lastPieceRow = piece.row;
-        let lastPieceCol = piece.col;
+        // const removedPiece = this.boardData.removePiece(row, col);
+        // let lastPieceRow = piece.row;
+        // let lastPieceCol = piece.col;
+        // let lastImage = table.rows[row].cells[col].innerHTML;
+
+        let pieceImage = table.rows[piece.row].cells[piece.col].innerHTML;
+        table.rows[piece.row].cells[piece.col].innerHTML = "";
+        table.rows[row].cells[col].innerHTML = pieceImage;
+
+        boardData.removePiece(row, col);
         piece.row = row;
         piece.col = col;
 

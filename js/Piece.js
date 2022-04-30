@@ -94,31 +94,4 @@ class Piece {
 
     return result;
   }
-
-  //   getQueenMoves(boardData) {
-  //     let result = [];
-  //     result = result.concat(this.getMovesInDirection(-1, -1, boardData));
-  //     result = result.concat(this.getMovesInDirection(-1, 1, boardData));
-  //     result = result.concat(this.getMovesInDirection(1, -1, boardData));
-  //     result = result.concat(this.getMovesInDirection(1, 1, boardData));
-  //     return result;
-  //   }
-
-  //   getMovesInDirection(directionRow, directionCol, boardData) {
-  //     let result = [];
-
-  //     for (let i = 1; i < BOARD_SIZE; i++) {
-  //       let row = this.row + directionRow * i;
-  //       let col = this.col + directionCol * i;
-  //       if (boardData.isEmpty(row, col)) {
-  //         result.push([row, col]);
-  //       } else if (boardData.isPlayer(row, col, this.player)) {
-  //         return result;
-  //       } else {
-  //         result.push([row, col]);
-  //         return result;
-  //       }
-  //     }
-  //     return result;
-  //   }
 }

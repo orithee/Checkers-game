@@ -19,6 +19,7 @@ class Game {
     if (this.winner !== undefined) {
       return;
     }
+    // TODO: check if there is some EatingDirections options in his turn - if ve have - dont show the regular moves...
 
     const piece = boardData.getPiece(row, col);
     console.log(piece);
@@ -59,10 +60,54 @@ class Game {
     selectedPiece = piece;
   }
 
-  tryMove(piece, row, col) {
-    // Check if the click for movement is valid:
-    // TODO: merge the possible moves for more clearly...
-    const possibleMoves = piece.getPossibleMoves(boardData);
+  tryGetEatingDirections(piece, row, col) {
+    let possibleMoves = piece.getEatingDirections();
+    if (possibleMoves[0] !== undefined) {
+      for (const possibleMove of possibleMoves) {
+        if (possibleMove[0] === row && possibleMove[1] === col) {
+          //   TODO: change the piece location, remove the enemy piece
+          if (this.currentPlayer === BLACK_PLAYER) {
+            if (possibleMove[1] > piece.col) {
+              table.rows[row + 1].cells[col - 1].innerHTML = "";
+              boardData.removePiece(row + 1, col - 1);
+            } else {
+              table.rows[row + 1].cells[col + 1].innerHTML = "";
+              boardData.removePiece(row + 1, col + 1);
+            }
+          } else {
+            if (possibleMove[1] > piece.col) {
+              table.rows[row - 1].cells[col - 1].innerHTML = "";
+              boardData.removePiece(row - 1, col - 1);
+            } else {
+              table.rows[row - 1].cells[col + 1].innerHTML = "";
+              boardData.removePiece(row - 1, col + 1);
+            }
+          }
+
+          let pieceImage = table.rows[piece.row].cells[piece.col].innerHTML;
+          table.rows[piece.row].cells[piece.col].innerHTML = "";
+          table.rows[row].cells[col].innerHTML = pieceImage;
+
+          boardData.removePiece(row, col);
+          piece.row = row;
+          piece.col = col;
+
+          this.currentPlayer = piece.getOpponent();
+          document
+            .querySelector(".Player-1")
+            .classList.toggle("player--active");
+          document
+            .querySelector(".Player-2")
+            .classList.toggle("player--active");
+
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  tryGetRegularStep(piece, row, col) {
+    let possibleMoves = piece.getPossibleMoves();
     for (const possibleMove of possibleMoves) {
       if (possibleMove[0] === row && possibleMove[1] === col) {
         // There is a legal move, so do this:
@@ -79,20 +124,28 @@ class Game {
         piece.row = row;
         piece.col = col;
 
-        // TODO : if he try possible move of eatingDirections - its okay.
-        // TODO : if he try regular possible move - check if he was can do possible move of eatingDirections.
-        //  if he had some possible move of eatingDirections - cancel this movement.
-        //  but check it before this movement !!!
-        // remember to return image !
-
-        // Change the currentPlayer:
         this.currentPlayer = piece.getOpponent();
         document.querySelector(".Player-1").classList.toggle("player--active");
         document.querySelector(".Player-2").classList.toggle("player--active");
-
         return true;
       }
     }
+    return false;
+  }
+  tryMove(piece, row, col) {
+    // Check if the click for movement is valid:
+    // TODO: merge the possible moves for more clearly...
+
+    if (this.tryGetEatingDirections(piece, row, col)) return true;
+    if (this.tryGetRegularStep(piece, row, col)) return true;
+
+    // TODO : if he try possible move of eatingDirections - its okay.
+    // TODO : if he try regular possible move - check if he was can do possible move of eatingDirections.
+    //  if he had some possible move of eatingDirections - cancel this movement.
+    //  but check it before this movement !!!
+    // remember to return image !
+
+    // Change the currentPlayer:
 
     return false;
   }

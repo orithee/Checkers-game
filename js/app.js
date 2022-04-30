@@ -1,18 +1,45 @@
 const CHECKERS_BOARD_ID = "checkers-board";
 const BOARD_SIZE = 8;
+
+const WHITE_PLAYER = "white";
+const BLACK_PLAYER = "black";
+const PAWN = "pawn";
+
+let notYourTurn = document.createElement("div");
+let selectedPiece;
+
 let table;
+let game;
+let boardData;
 
 function initGame() {
-  console.log("start");
+  boardData = new BoardData();
+  //   console.log(boardData);
+  //   console.log(boardData.pieces);
+  game = new Game(WHITE_PLAYER);
+  //   console.log(game);
   createBoard();
 }
 
-function onCellClick() {
-  console.log("Cell Was clicked");
+function onCellClick(row, col) {
+  // Remove the alert "notYourTurn":
+  //   notYourTurn.remove();
+
+  // selectedPiece - (selected in previous click) The current selected piece.
+  //   (row, col)- the current click:
+  if (selectedPiece !== undefined && game.tryMove(selectedPiece, row, col)) {
+    selectedPiece = undefined;
+    // createChessBoard(game.boardData);
+    //TODO: checking if the next player can do somthing :
+    // game.checkingIfCheck();
+    // game.checkingIfMatte();
+  } else {
+    game.clearBoard();
+    game.showPossibleMovesOnBoard(row, col);
+  }
 }
 
 function createBoard() {
-  console.log("createBoard");
   table = document.createElement("table");
   table.id = CHECKERS_BOARD_ID;
   document.body.appendChild(table);
@@ -28,18 +55,18 @@ function createBoard() {
       }
     }
   }
-  //   addImages();
+  addImages();
 }
 
-// function addImages() {
-//   // Add pieces images to board
-//   for (let piece of boardData.pieces) {
-//     const cell = table.rows[piece.row].cells[piece.col];
-//     const image = document.createElement("img");
-//     image.src = "images/" + piece.player + "/" + piece.type + ".png";
-//     image.draggable = false;
-//     cell.appendChild(image);
-//   }
-// }
+function addImages() {
+  // Add pieces images to board
+  for (let piece of boardData.pieces) {
+    const cell = table.rows[piece.row].cells[piece.col];
+    const image = document.createElement("img");
+    image.src = "images/" + piece.player + ".jpeg";
+    image.draggable = false;
+    cell.appendChild(image);
+  }
+}
 
 window.addEventListener("load", initGame);

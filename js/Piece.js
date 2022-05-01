@@ -46,15 +46,14 @@ class Piece {
       for (let i = 1; i < BOARD_SIZE; i++) {
         let row = this.row + directionRow[j] * i;
         let col = this.col + directionCol[j] * i;
-        if (boardData.isEmpty(row, col)) {
-        } else {
-          if (boardData.isEnemy(row, col)) {
-            result.push([
-              this.row + directionRow[j] * i + directionRow[j],
-              this.col + directionCol[j] * i + directionCol[j],
-            ]);
-            break;
+        if (!boardData.isEmpty(row, col)) {
+          if (
+            boardData.isEnemy(row, col) &&
+            boardData.isEmpty(row + directionRow[j], col + directionCol[j])
+          ) {
+            result.push([row + directionRow[j], col + directionCol[j]]);
           }
+          break;
         }
       }
     }

@@ -132,11 +132,42 @@ class Game {
     }
     return false;
   }
+  checkIfEatingIsOptional() {
+    // Checks if the current player has the option to make a eating move:
+    let piecesThisPlayer = [];
+    for (let piece of boardData.pieces) {
+      if (piece.player === this.currentPlayer) {
+        piecesThisPlayer.push(piece);
+      }
+    }
+    console.log(piecesThisPlayer);
+    // Get an array of possible moves of each soldier of the player who played last:
+    let possibleMovesThisTurn = [];
+    for (let piece of piecesThisPlayer) {
+      possibleMovesThisTurn = possibleMovesThisTurn.concat(
+        piece.getEatingDirections()
+      );
+    }
+
+    console.log(possibleMovesThisTurn);
+    if (possibleMovesThisTurn[0] === undefined) {
+      return false;
+    } else {
+      mustEat.classList.add("Check-position");
+      mustEat.textContent = "You Must Eat!";
+      table.appendChild(mustEat);
+      console.log("you must eat !");
+      return true;
+    }
+  }
   tryMove(piece, row, col) {
     // Check if the click for movement is valid:
     // TODO: merge the possible moves for more clearly...
 
     if (this.tryGetEatingDirections(piece, row, col)) return true;
+    // TODO:
+    if (this.checkIfEatingIsOptional()) return false;
+
     if (this.tryGetRegularStep(piece, row, col)) return true;
 
     // TODO : if he try possible move of eatingDirections - its okay.

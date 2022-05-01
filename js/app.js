@@ -6,6 +6,7 @@ const BLACK_PLAYER = "black";
 const PAWN = "pawn";
 
 let notYourTurn = document.createElement("div");
+let mustEat = document.createElement("div");
 let selectedPiece;
 
 let table;
@@ -24,6 +25,7 @@ function initGame() {
 function onCellClick(row, col) {
   // Remove the alert "notYourTurn":
   notYourTurn.remove();
+  mustEat.remove();
 
   // selectedPiece - (selected in previous click) The current selected piece.
   //   (row, col)- the current click:

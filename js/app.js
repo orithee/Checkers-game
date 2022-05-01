@@ -6,7 +6,7 @@ const BLACK_PLAYER = "black";
 const PAWN = "pawn";
 
 let notYourTurn = document.createElement("div");
-let mustEat = document.createElement("div");
+let youMustEat = document.createElement("div");
 let selectedPiece;
 
 let table;
@@ -15,23 +15,21 @@ let boardData;
 
 function initGame() {
   boardData = new BoardData();
-  //   console.log(boardData);
-  //   console.log(boardData.pieces);
   game = new Game(WHITE_PLAYER);
-  //   console.log(game);
   createBoard();
 }
 
 function onCellClick(row, col) {
-  // Remove the alert "notYourTurn":
+  // Remove the alerts "notYourTurn","mustEat" :
   notYourTurn.remove();
-  mustEat.remove();
+  youMustEat.remove();
 
   // selectedPiece - (selected in previous click) The current selected piece.
   //   (row, col)- the current click:
   if (selectedPiece !== undefined && game.tryMove(selectedPiece, row, col)) {
     selectedPiece = undefined;
     game.clearBoard();
+    game.checkingIfGameOver();
     //TODO: checking if the next player can do somthing :
     // game.checkingIfMatte();
   } else {

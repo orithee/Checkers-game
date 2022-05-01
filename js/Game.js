@@ -41,7 +41,6 @@ class Game {
       //   console.log(possibleMoves);
       // TODO: if possibleMoves have no possible move - so do the else:
       possibleMoves = piece.getEatingDirections();
-      console.log(possibleMoves[0]);
       if (possibleMoves[0] !== undefined) {
         for (let possibleMove of possibleMoves) {
           const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
@@ -140,7 +139,6 @@ class Game {
         piecesThisPlayer.push(piece);
       }
     }
-    console.log(piecesThisPlayer);
     // Get an array of possible moves of each soldier of the player who played last:
     let possibleMovesThisTurn = [];
     for (let piece of piecesThisPlayer) {
@@ -149,14 +147,12 @@ class Game {
       );
     }
 
-    console.log(possibleMovesThisTurn);
     if (possibleMovesThisTurn[0] === undefined) {
       return false;
     } else {
-      mustEat.classList.add("Check-position");
-      mustEat.textContent = "You Must Eat!";
-      table.appendChild(mustEat);
-      console.log("you must eat !");
+      youMustEat.classList.add("Check-position");
+      youMustEat.textContent = "You Must Eat!";
+      table.appendChild(youMustEat);
       return true;
     }
   }
@@ -164,77 +160,90 @@ class Game {
     // Check if the click for movement is valid:
     // TODO: merge the possible moves for more clearly...
 
+    // 1. If he try possible move of eatingDirections - its okay.
     if (this.tryGetEatingDirections(piece, row, col)) return true;
-    // TODO:
+
+    // 2. Before he tries a normal step - check: if he has the option to eat you will exit the function. He must eat!
     if (this.checkIfEatingIsOptional()) return false;
 
+    // 3. If he can not eat - he can take a normal step.
     if (this.tryGetRegularStep(piece, row, col)) return true;
 
-    // TODO : if he try possible move of eatingDirections - its okay.
-    // TODO : if he try regular possible move - check if he was can do possible move of eatingDirections.
-    //  if he had some possible move of eatingDirections - cancel this movement.
-    //  but check it before this movement !!!
-    // remember to return image !
-
-    // Change the currentPlayer:
-
+    // 4. If he did not take a step - exit the function. To choose a new step
     return false;
   }
 
-  cancelThisMovement(piece, lastPieceRow, lastPieceCol, removedPiece) {
-    // Cancel the last movement:
-    piece.row = lastPieceRow;
-    piece.col = lastPieceCol;
-    if (removedPiece !== undefined) {
-      this.boardData.pieces.push(
-        new Piece(
-          removedPiece.row,
-          removedPiece.col,
-          removedPiece.type,
-          removedPiece.player
-        )
+  checkingIfGameOver() {
+    let piecesNextPlayer = [];
+    for (let piece of boardData.pieces) {
+      if (piece.player === this.currentPlayer) {
+        piecesNextPlayer.push(piece);
+      }
+    }
+
+    console.log(piecesNextPlayer);
+    // Get an array of possible moves of each soldier of the player who played last:
+    let possibleMovesThisTurn = [];
+    for (let piece of piecesNextPlayer) {
+      possibleMovesThisTurn = possibleMovesThisTurn.concat(
+        piece.getEatingDirections()
       );
+      possibleMovesThisTurn = possibleMovesThisTurn.concat(
+        piece.getPossibleMoves()
+      );
+    }
+
+    console.log(possibleMovesThisTurn);
+    if (
+      piecesNextPlayer[0] === undefined &&
+      possibleMovesThisTurn[0] === undefined
+    ) {
+      console.log("game over");
+      this.announceTheWinner();
+      this.endOfTheGame();
+      return true;
+    } else {
+      return false;
     }
   }
 
-  // checkingIfCheck() {
-  //   // Find the pieces the previous player has on the board:
-  //   let piecesPreviousPlayer = [];
-  //   for (let piece of game.boardData.pieces) {
-  //     if (piece.getOpponent() === game.currentPlayer) {
-  //       piecesPreviousPlayer.push(piece);
+  announceTheWinner() {
+    // The player whose turn is now lost - so the other player is the winner:
+    if (this.currentPlayer === WHITE_PLAYER) {
+      game.winner = BLACK_PLAYER;
+    }
+    if (this.currentPlayer === BLACK_PLAYER) game.winner = WHITE_PLAYER;
+  }
+
+  endOfTheGame() {
+    if (game.winner !== undefined) {
+      // We have a winner! Finish the game
+      const winnerPopup = document.createElement("div");
+      const winner = game.winner.charAt(0).toUpperCase() + game.winner.slice(1);
+      winnerPopup.classList.add("Victory-jumps");
+      winnerPopup.textContent = winner + " player wins!";
+      console.log(winnerPopup.textContent);
+      table.appendChild(winnerPopup);
+      document.querySelector(".Player-1").classList.toggle("player--active");
+      document.querySelector(".Player-2").classList.toggle("player--active");
+      return true;
+    }
+    return false;
+  }
+
+  //   cancelThisMovement(piece, lastPieceRow, lastPieceCol, removedPiece) {
+  //     // Cancel the last movement:
+  //     piece.row = lastPieceRow;
+  //     piece.col = lastPieceCol;
+  //     if (removedPiece !== undefined) {
+  //       this.boardData.pieces.push(
+  //         new Piece(
+  //           removedPiece.row,
+  //           removedPiece.col,
+  //           removedPiece.type,
+  //           removedPiece.player
+  //         )
+  //       );
   //     }
   //   }
-
-  //   // Get an array of possible moves of each soldier of the player who played last:
-  //   let possibleMovesNextTurn = [];
-  //   for (let piece of piecesPreviousPlayer) {
-  //     possibleMovesNextTurn = possibleMovesNextTurn.concat(
-  //       piece.getPossibleMoves(game.boardData)
-  //     );
-  //   }
-
-  //   // Finding the oponnent King's Location(row, col) - like this : [0, 3]
-  //   let kingLocation;
-  //   for (let piece of game.boardData.pieces) {
-  //     if (piece.type === KING && piece.player === game.currentPlayer) {
-  //       kingLocation = [piece.row, piece.col];
-  //     }
-  //   }
-
-  //   // Check if one of the next cells that the last player can advance to is the King's cell:
-  //   for (let i = 0; i < possibleMovesNextTurn.length; i++) {
-  //     if (
-  //       possibleMovesNextTurn[i][0] === kingLocation[0] &&
-  //       possibleMovesNextTurn[i][1] === kingLocation[1]
-  //     ) {
-  //       const Check = document.createElement("div");
-  //       Check.classList.add("Check-position");
-  //       Check.textContent = "Check!";
-  //       table.appendChild(Check);
-
-  //       return true;
-  //     }
-  //   }
-  // }
 }

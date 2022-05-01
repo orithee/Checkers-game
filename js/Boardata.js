@@ -1,42 +1,21 @@
 class BoardData {
   constructor() {
-    this.initPieces();
+    this.pieces = this.initPieces();
   }
 
   initPieces() {
     // Create list of pieces (32 total)
-    this.pieces = [];
-
-    this.pieces.push(new Piece(0, 1, PAWN, WHITE_PLAYER));
-    this.pieces.push(new Piece(0, 3, PAWN, WHITE_PLAYER));
-    this.pieces.push(new Piece(0, 5, PAWN, WHITE_PLAYER));
-    this.pieces.push(new Piece(0, 7, PAWN, WHITE_PLAYER));
-    this.pieces.push(new Piece(1, 0, PAWN, WHITE_PLAYER));
-    this.pieces.push(new Piece(1, 2, PAWN, WHITE_PLAYER));
-    this.pieces.push(new Piece(1, 4, PAWN, WHITE_PLAYER));
-    this.pieces.push(new Piece(1, 6, PAWN, WHITE_PLAYER));
-    this.pieces.push(new Piece(2, 1, PAWN, WHITE_PLAYER));
-    this.pieces.push(new Piece(2, 3, PAWN, WHITE_PLAYER));
-    this.pieces.push(new Piece(2, 5, PAWN, WHITE_PLAYER));
-    this.pieces.push(new Piece(2, 7, PAWN, WHITE_PLAYER));
-
-    this.pieces.push(new Piece(5, 0, PAWN, BLACK_PLAYER));
-    this.pieces.push(new Piece(5, 2, PAWN, BLACK_PLAYER));
-    this.pieces.push(new Piece(5, 4, PAWN, BLACK_PLAYER));
-    this.pieces.push(new Piece(5, 6, PAWN, BLACK_PLAYER));
-    this.pieces.push(new Piece(6, 1, PAWN, BLACK_PLAYER));
-    this.pieces.push(new Piece(6, 3, PAWN, BLACK_PLAYER));
-    this.pieces.push(new Piece(6, 5, PAWN, BLACK_PLAYER));
-    this.pieces.push(new Piece(6, 7, PAWN, BLACK_PLAYER));
-    this.pieces.push(new Piece(7, 0, PAWN, BLACK_PLAYER));
-    this.pieces.push(new Piece(7, 2, PAWN, BLACK_PLAYER));
-    this.pieces.push(new Piece(7, 4, PAWN, BLACK_PLAYER));
-    this.pieces.push(new Piece(7, 6, PAWN, BLACK_PLAYER));
-    //   this.pieces.push(new Piece(1, i, PAWN, WHITE_PLAYER));
-    //   this.pieces.push(new Piece(6, i, PAWN, BLACK_PLAYER));
-    //   this.pieces.push(new Piece(7, i, PIECES[i], BLACK_PLAYER));
-
-    // return pieces;
+    let piecesArray = [];
+    let col = [0, 2, 4, 6];
+    for (let number of col) {
+      piecesArray.push(new Piece(0, number + 1, PAWN, WHITE_PLAYER));
+      piecesArray.push(new Piece(1, number, PAWN, WHITE_PLAYER));
+      piecesArray.push(new Piece(2, number + 1, PAWN, WHITE_PLAYER));
+      piecesArray.push(new Piece(5, number, PAWN, BLACK_PLAYER));
+      piecesArray.push(new Piece(6, number + 1, PAWN, BLACK_PLAYER));
+      piecesArray.push(new Piece(7, number, PAWN, BLACK_PLAYER));
+    }
+    return piecesArray;
   }
 
   getPiece(row, col) {
@@ -67,13 +46,6 @@ class BoardData {
   isEnemy(row, col) {
     //  If there is enemy piece in the cell - return true:
     let piece = this.getPiece(row, col);
-    console.log(piece);
     return piece.player !== game.currentPlayer;
-  }
-
-  isPlayer(row, col, player) {
-    //  If there is piece with the same player in this cell - return true. else - false :
-    const piece = this.getPiece(row, col);
-    return piece !== undefined && piece.player === player;
   }
 }

@@ -13,7 +13,7 @@ class Piece {
     return WHITE_PLAYER;
   }
 
-  getEatingDirections() {
+  getEatingMoves() {
     let moves;
 
     if (this.type === PAWN) {
@@ -48,7 +48,7 @@ class Piece {
     return result;
   }
 
-  getPossibleMoves() {
+  getNormaleMoves() {
     // Find the possibleMoves:
     let moves;
 

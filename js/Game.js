@@ -33,25 +33,16 @@ class Game {
       return;
     }
 
-    // Show possible moves:
+    // Show possible moves - If there are eating steps - show them. If not - show the normal steps:
     if (piece !== undefined) {
-      // TODO : get the possible move of eatingDirections.
-      // TODO : if he have some possible move of eatingDirections dont show the regular steps:
       let possibleMoves;
-      //   console.log(possibleMoves);
-      // TODO: if possibleMoves have no possible move - so do the else:
-      possibleMoves = piece.getEatingDirections();
-      if (possibleMoves[0] !== undefined) {
-        for (let possibleMove of possibleMoves) {
-          const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
-          cell.classList.add("possible-move");
-        }
-      } else {
-        possibleMoves = piece.getPossibleMoves();
-        for (let possibleMove of possibleMoves) {
-          const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
-          cell.classList.add("possible-move");
-        }
+      possibleMoves = piece.getEatingMoves();
+      if (possibleMoves[0] === undefined) {
+        possibleMoves = piece.getNormaleMoves();
+      }
+      for (let possibleMove of possibleMoves) {
+        const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
+        cell.classList.add("possible-move");
       }
     }
 
@@ -59,8 +50,8 @@ class Game {
     selectedPiece = piece;
   }
 
-  tryGetEatingDirections(piece, row, col) {
-    let possibleMoves = piece.getEatingDirections();
+  tryDoEatingStep(piece, row, col) {
+    let possibleMoves = piece.getEatingMoves();
     if (possibleMoves[0] !== undefined) {
       for (const possibleMove of possibleMoves) {
         if (possibleMove[0] === row && possibleMove[1] === col) {
@@ -91,7 +82,8 @@ class Game {
           piece.row = row;
           piece.col = col;
 
-          this.currentPlayer = piece.getOpponent();
+          this.currentPlayer =
+            this.currentPlayer === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
           document
             .querySelector(".Player-1")
             .classList.toggle("player--active");
@@ -105,8 +97,8 @@ class Game {
     }
     return false;
   }
-  tryGetRegularStep(piece, row, col) {
-    let possibleMoves = piece.getPossibleMoves();
+  tryDoNormalStep(piece, row, col) {
+    let possibleMoves = piece.getNormaleMoves();
     for (const possibleMove of possibleMoves) {
       if (possibleMove[0] === row && possibleMove[1] === col) {
         // There is a legal move, so do this:
@@ -123,7 +115,8 @@ class Game {
         piece.row = row;
         piece.col = col;
 
-        this.currentPlayer = piece.getOpponent();
+        this.currentPlayer =
+          this.currentPlayer === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
         document.querySelector(".Player-1").classList.toggle("player--active");
         document.querySelector(".Player-2").classList.toggle("player--active");
         return true;
@@ -143,7 +136,7 @@ class Game {
     let possibleMovesThisTurn = [];
     for (let piece of piecesThisPlayer) {
       possibleMovesThisTurn = possibleMovesThisTurn.concat(
-        piece.getEatingDirections()
+        piece.getEatingMoves()
       );
     }
 
@@ -160,14 +153,14 @@ class Game {
     // Check if the click for movement is valid:
     // TODO: merge the possible moves for more clearly...
 
-    // 1. If he try possible move of eatingDirections - its okay.
-    if (this.tryGetEatingDirections(piece, row, col)) return true;
+    // 1. If he try possible move of eatingDirections - its okay, do it.
+    if (this.tryDoEatingStep(piece, row, col)) return true;
 
-    // 2. Before he tries a normal step - check: if he has the option to eat you will exit the function. He must eat!
+    // 2. Before he tries a normal step - check: if he has the option to eat - exit the function. He must eat!
     if (this.checkIfEatingIsOptional()) return false;
 
     // 3. If he can not eat - he can take a normal step.
-    if (this.tryGetRegularStep(piece, row, col)) return true;
+    if (this.tryDoNormalStep(piece, row, col)) return true;
 
     // 4. If he did not take a step - exit the function. To choose a new step
     return false;
@@ -186,10 +179,10 @@ class Game {
     let possibleMovesThisTurn = [];
     for (let piece of piecesNextPlayer) {
       possibleMovesThisTurn = possibleMovesThisTurn.concat(
-        piece.getEatingDirections()
+        piece.getEatingMoves()
       );
       possibleMovesThisTurn = possibleMovesThisTurn.concat(
-        piece.getPossibleMoves()
+        piece.getNormaleMoves()
       );
     }
 
@@ -230,20 +223,4 @@ class Game {
     }
     return false;
   }
-
-  //   cancelThisMovement(piece, lastPieceRow, lastPieceCol, removedPiece) {
-  //     // Cancel the last movement:
-  //     piece.row = lastPieceRow;
-  //     piece.col = lastPieceCol;
-  //     if (removedPiece !== undefined) {
-  //       this.boardData.pieces.push(
-  //         new Piece(
-  //           removedPiece.row,
-  //           removedPiece.col,
-  //           removedPiece.type,
-  //           removedPiece.player
-  //         )
-  //       );
-  //     }
-  //   }
 }

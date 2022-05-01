@@ -6,13 +6,6 @@ class Piece {
     this.player = player;
   }
 
-  getOpponent() {
-    if (this.player === WHITE_PLAYER) {
-      return BLACK_PLAYER;
-    }
-    return WHITE_PLAYER;
-  }
-
   getEatingMoves() {
     let moves;
 
@@ -34,7 +27,6 @@ class Piece {
       boardData.isEnemy(this.row + direction, this.col - 1) &&
       boardData.isEmpty(this.row + direction * 2, this.col - 1 * 2)
     ) {
-      console.log("this enemy");
       result.push([this.row + direction * 2, this.col - 1 * 2]);
     }
     if (

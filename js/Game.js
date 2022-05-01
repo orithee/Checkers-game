@@ -22,7 +22,7 @@ class Game {
     // TODO: check if there is some EatingDirections options in his turn - if ve have - dont show the regular moves...
 
     const piece = boardData.getPiece(row, col);
-    console.log(piece);
+    // console.log(piece);
 
     // If this is not the turn of the player who clicked - exit the function:
     if (piece !== undefined && this.currentPlayer !== piece.player) {
@@ -50,105 +50,6 @@ class Game {
     selectedPiece = piece;
   }
 
-  tryDoEatingStep(piece, row, col) {
-    let possibleMoves = piece.getEatingMoves();
-    if (possibleMoves[0] !== undefined) {
-      for (const possibleMove of possibleMoves) {
-        if (possibleMove[0] === row && possibleMove[1] === col) {
-          //   TODO: change the piece location, remove the enemy piece
-          if (this.currentPlayer === BLACK_PLAYER) {
-            if (possibleMove[1] > piece.col) {
-              table.rows[row + 1].cells[col - 1].innerHTML = "";
-              boardData.removePiece(row + 1, col - 1);
-            } else {
-              table.rows[row + 1].cells[col + 1].innerHTML = "";
-              boardData.removePiece(row + 1, col + 1);
-            }
-          } else {
-            if (possibleMove[1] > piece.col) {
-              table.rows[row - 1].cells[col - 1].innerHTML = "";
-              boardData.removePiece(row - 1, col - 1);
-            } else {
-              table.rows[row - 1].cells[col + 1].innerHTML = "";
-              boardData.removePiece(row - 1, col + 1);
-            }
-          }
-
-          let pieceImage = table.rows[piece.row].cells[piece.col].innerHTML;
-          table.rows[piece.row].cells[piece.col].innerHTML = "";
-          table.rows[row].cells[col].innerHTML = pieceImage;
-
-          boardData.removePiece(row, col);
-          piece.row = row;
-          piece.col = col;
-
-          this.currentPlayer =
-            this.currentPlayer === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
-          document
-            .querySelector(".Player-1")
-            .classList.toggle("player--active");
-          document
-            .querySelector(".Player-2")
-            .classList.toggle("player--active");
-
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-  tryDoNormalStep(piece, row, col) {
-    let possibleMoves = piece.getNormaleMoves();
-    for (const possibleMove of possibleMoves) {
-      if (possibleMove[0] === row && possibleMove[1] === col) {
-        // There is a legal move, so do this:
-        // const removedPiece = this.boardData.removePiece(row, col);
-        // let lastPieceRow = piece.row;
-        // let lastPieceCol = piece.col;
-        // let lastImage = table.rows[row].cells[col].innerHTML;
-
-        let pieceImage = table.rows[piece.row].cells[piece.col].innerHTML;
-        table.rows[piece.row].cells[piece.col].innerHTML = "";
-        table.rows[row].cells[col].innerHTML = pieceImage;
-
-        boardData.removePiece(row, col);
-        piece.row = row;
-        piece.col = col;
-
-        this.currentPlayer =
-          this.currentPlayer === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
-        document.querySelector(".Player-1").classList.toggle("player--active");
-        document.querySelector(".Player-2").classList.toggle("player--active");
-        return true;
-      }
-    }
-    return false;
-  }
-  checkIfEatingIsOptional() {
-    // Checks if the current player has the option to make a eating move:
-    let piecesThisPlayer = [];
-    for (let piece of boardData.pieces) {
-      if (piece.player === this.currentPlayer) {
-        piecesThisPlayer.push(piece);
-      }
-    }
-    // Get an array of possible moves of each soldier of the player who played last:
-    let possibleMovesThisTurn = [];
-    for (let piece of piecesThisPlayer) {
-      possibleMovesThisTurn = possibleMovesThisTurn.concat(
-        piece.getEatingMoves()
-      );
-    }
-
-    if (possibleMovesThisTurn[0] === undefined) {
-      return false;
-    } else {
-      youMustEat.classList.add("Check-position");
-      youMustEat.textContent = "You Must Eat!";
-      table.appendChild(youMustEat);
-      return true;
-    }
-  }
   tryMove(piece, row, col) {
     // Check if the click for movement is valid:
     // TODO: merge the possible moves for more clearly...
@@ -166,7 +67,97 @@ class Game {
     return false;
   }
 
+  tryDoEatingStep(piece, row, col) {
+    let possibleMoves = piece.getEatingMoves();
+    if (possibleMoves[0] !== undefined) {
+      for (const possibleMove of possibleMoves) {
+        if (possibleMove[0] === row && possibleMove[1] === col) {
+          // There is a legal move, so do this:
+          // 1. Remove the enemy piece
+          if (this.currentPlayer === BLACK_PLAYER) {
+            if (possibleMove[1] > piece.col) {
+              table.rows[row + 1].cells[col - 1].innerHTML = "";
+              boardData.removePiece(row + 1, col - 1);
+            } else {
+              table.rows[row + 1].cells[col + 1].innerHTML = "";
+              boardData.removePiece(row + 1, col + 1);
+            }
+          } else {
+            if (possibleMove[1] > piece.col) {
+              table.rows[row - 1].cells[col - 1].innerHTML = "";
+              boardData.removePiece(row - 1, col - 1);
+            } else {
+              table.rows[row - 1].cells[col + 1].innerHTML = "";
+              boardData.removePiece(row - 1, col + 1);
+            }
+          }
+          // 2. Change the piece location:
+          if (this.makeTheMove(piece, row, col)) return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  makeTheMove(piece, row, col) {
+    // Change the piece location:
+    let pieceImage = table.rows[piece.row].cells[piece.col].innerHTML;
+    table.rows[piece.row].cells[piece.col].innerHTML = "";
+    table.rows[row].cells[col].innerHTML = pieceImage;
+
+    boardData.removePiece(row, col);
+    piece.row = row;
+    piece.col = col;
+
+    this.currentPlayer =
+      this.currentPlayer === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
+    document.querySelector(".Player-1").classList.toggle("player--active");
+    document.querySelector(".Player-2").classList.toggle("player--active");
+    return true;
+  }
+
+  checkIfEatingIsOptional() {
+    // Checks if the current player has the option to make a eating move:
+    // 1. Get an array of this player pieces:
+    let piecesThisPlayer = [];
+    for (let piece of boardData.pieces) {
+      if (piece.player === this.currentPlayer) {
+        piecesThisPlayer.push(piece);
+      }
+    }
+
+    // 2. Get an array of "possible eating moves" of each piece of this player:
+    let possibleMovesThisTurn = [];
+    for (let piece of piecesThisPlayer) {
+      possibleMovesThisTurn = possibleMovesThisTurn.concat(
+        piece.getEatingMoves()
+      );
+    }
+
+    // 3. If he has no eating steps - exit the function. If he has - he must eat!
+    if (possibleMovesThisTurn[0] === undefined) {
+      return false;
+    } else {
+      youMustEat.classList.add("Check-position");
+      youMustEat.textContent = "You Must Eat!";
+      table.appendChild(youMustEat);
+      return true;
+    }
+  }
+
+  tryDoNormalStep(piece, row, col) {
+    let possibleMoves = piece.getNormaleMoves();
+    for (const possibleMove of possibleMoves) {
+      if (possibleMove[0] === row && possibleMove[1] === col) {
+        // There is a legal move, so do this - Change the piece location:
+        if (this.makeTheMove(piece, row, col)) return true;
+      }
+    }
+    return false;
+  }
+
   checkingIfGameOver() {
+    // 1. Get an array of the next player's pieces
     let piecesNextPlayer = [];
     for (let piece of boardData.pieces) {
       if (piece.player === this.currentPlayer) {
@@ -174,8 +165,7 @@ class Game {
       }
     }
 
-    console.log(piecesNextPlayer);
-    // Get an array of possible moves of each soldier of the player who played last:
+    // 2. Get an array of possible moves of each piece of the player who played last:
     let possibleMovesThisTurn = [];
     for (let piece of piecesNextPlayer) {
       possibleMovesThisTurn = possibleMovesThisTurn.concat(
@@ -186,26 +176,21 @@ class Game {
       );
     }
 
-    console.log(possibleMovesThisTurn);
+    // 3. If he has no more pieces / has no possible move - he has lost the game:
     if (
-      piecesNextPlayer[0] === undefined &&
+      piecesNextPlayer[0] === undefined ||
       possibleMovesThisTurn[0] === undefined
     ) {
       console.log("game over");
       this.announceTheWinner();
       this.endOfTheGame();
-      return true;
-    } else {
-      return false;
     }
   }
 
   announceTheWinner() {
     // The player whose turn is now lost - so the other player is the winner:
-    if (this.currentPlayer === WHITE_PLAYER) {
-      game.winner = BLACK_PLAYER;
-    }
-    if (this.currentPlayer === BLACK_PLAYER) game.winner = WHITE_PLAYER;
+    game.winner =
+      this.currentPlayer === WHITE_PLAYER ? BLACK_PLAYER : WHITE_PLAYER;
   }
 
   endOfTheGame() {
@@ -219,8 +204,6 @@ class Game {
       table.appendChild(winnerPopup);
       document.querySelector(".Player-1").classList.toggle("player--active");
       document.querySelector(".Player-2").classList.toggle("player--active");
-      return true;
     }
-    return false;
   }
 }

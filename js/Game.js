@@ -4,18 +4,8 @@ class Game {
     this.winner = undefined;
   }
 
-  clearBoard() {
-    // Clear all previous possible moves + previous selected cell:
-    for (let i = 0; i < BOARD_SIZE; i++) {
-      for (let j = 0; j < BOARD_SIZE; j++) {
-        table.rows[i].cells[j].classList.remove("possible-move");
-        table.rows[i].cells[j].classList.remove("selected");
-      }
-    }
-  }
-
   showPossibleMovesOnBoard(row, col) {
-    // If the game is over - exit the function:
+    // 1. If the game is over - exit the function:
     if (this.winner !== undefined) {
       return;
     }
@@ -24,7 +14,7 @@ class Game {
     const piece = boardData.getPiece(row, col);
     // console.log(piece);
 
-    // If this is not the turn of the player who clicked - exit the function:
+    // 2. If this is not the turn of the player who clicked - exit the function:
     if (piece !== undefined && this.currentPlayer !== piece.player) {
       notYourTurn.classList.add("notYourTurn");
       notYourTurn.textContent = "Not your turn";
@@ -33,8 +23,8 @@ class Game {
       return;
     }
 
-    // Show possible moves - If there are eating steps - show them. If not - show the normal steps:
     if (piece !== undefined) {
+      // 3. Show possible moves - If there are eating steps - show them. If not - show the normal steps:
       let possibleMoves;
       possibleMoves = piece.getEatingMoves();
       if (possibleMoves[0] === undefined) {
@@ -63,6 +53,11 @@ class Game {
     // 3. If he can not eat - he can take a normal step.
     if (this.tryDoNormalStep(piece, row, col)) return true;
 
+    // TODO: change the image - to queen if black - clack...
+    // TODO: good photos, check the names of the pieces...
+    // TODO: add steps for the queen...normal + eating.
+    // TODO: think how to do big steps...
+
     // 4. If he did not take a step - exit the function. To choose a new step
     return false;
   }
@@ -74,23 +69,25 @@ class Game {
         if (possibleMove[0] === row && possibleMove[1] === col) {
           // There is a legal move, so do this:
           // 1. Remove the enemy piece
-          if (this.currentPlayer === BLACK_PLAYER) {
-            if (possibleMove[1] > piece.col) {
-              table.rows[row + 1].cells[col - 1].innerHTML = "";
-              boardData.removePiece(row + 1, col - 1);
-            } else {
-              table.rows[row + 1].cells[col + 1].innerHTML = "";
-              boardData.removePiece(row + 1, col + 1);
-            }
-          } else {
-            if (possibleMove[1] > piece.col) {
-              table.rows[row - 1].cells[col - 1].innerHTML = "";
-              boardData.removePiece(row - 1, col - 1);
-            } else {
-              table.rows[row - 1].cells[col + 1].innerHTML = "";
-              boardData.removePiece(row - 1, col + 1);
-            }
+          if (possibleMove[0] > piece.row && possibleMove[1] > piece.col) {
+            table.rows[row - 1].cells[col - 1].innerHTML = "";
+            boardData.removePiece(row - 1, col - 1);
           }
+
+          if (possibleMove[0] > piece.row && possibleMove[1] < piece.col) {
+            table.rows[row - 1].cells[col + 1].innerHTML = "";
+            boardData.removePiece(row - 1, col + 1);
+          }
+
+          if (possibleMove[0] < piece.row && possibleMove[1] < piece.col) {
+            table.rows[row + 1].cells[col + 1].innerHTML = "";
+            boardData.removePiece(row + 1, col + 1);
+          }
+          if (possibleMove[0] < piece.row && possibleMove[1] > piece.col) {
+            table.rows[row + 1].cells[col - 1].innerHTML = "";
+            boardData.removePiece(row + 1, col - 1);
+          }
+
           // 2. Change the piece location:
           if (this.makeTheMove(piece, row, col)) return true;
         }
@@ -105,9 +102,27 @@ class Game {
     table.rows[piece.row].cells[piece.col].innerHTML = "";
     table.rows[row].cells[col].innerHTML = pieceImage;
 
-    boardData.removePiece(row, col);
+    // boardData.removePiece(row, col);
     piece.row = row;
     piece.col = col;
+
+    // If the piece has reached the last row - make it "king"
+    if (
+      (this.currentPlayer === WHITE_PLAYER &&
+        piece.row === 7 &&
+        piece.type === PAWN) ||
+      (this.currentPlayer === BLACK_PLAYER &&
+        piece.row === 0 &&
+        piece.type === PAWN)
+    ) {
+      piece.type = KING;
+      console.log(piece.type);
+      const image = document.createElement("img");
+      image.src = "images/" + this.currentPlayer + "-king.png";
+      image.draggable = false;
+      table.rows[piece.row].cells[piece.col].innerHTML = "";
+      table.rows[piece.row].cells[piece.col].appendChild(image);
+    }
 
     this.currentPlayer =
       this.currentPlayer === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
@@ -138,7 +153,7 @@ class Game {
     if (possibleMovesThisTurn[0] === undefined) {
       return false;
     } else {
-      youMustEat.classList.add("Check-position");
+      youMustEat.classList.add("Must-eat");
       youMustEat.textContent = "You Must Eat!";
       table.appendChild(youMustEat);
       return true;

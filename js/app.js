@@ -4,6 +4,7 @@ const BOARD_SIZE = 8;
 const WHITE_PLAYER = "white";
 const BLACK_PLAYER = "black";
 const PAWN = "pawn";
+const KING = "king";
 
 let notYourTurn = document.createElement("div");
 let youMustEat = document.createElement("div");
@@ -28,12 +29,12 @@ function onCellClick(row, col) {
   //   (row, col)- the current click:
   if (selectedPiece !== undefined && game.tryMove(selectedPiece, row, col)) {
     selectedPiece = undefined;
-    game.clearBoard();
+    boardData.clearBoard();
     game.checkingIfGameOver();
     //TODO: checking if the next player can do somthing :
     // game.checkingIfMatte();
   } else {
-    game.clearBoard();
+    boardData.clearBoard();
     game.showPossibleMovesOnBoard(row, col);
   }
 }

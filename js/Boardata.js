@@ -18,6 +18,16 @@ class BoardData {
     return piecesArray;
   }
 
+  clearBoard() {
+    // Clear all previous possible moves + previous selected cell:
+    for (let i = 0; i < BOARD_SIZE; i++) {
+      for (let j = 0; j < BOARD_SIZE; j++) {
+        table.rows[i].cells[j].classList.remove("possible-move");
+        table.rows[i].cells[j].classList.remove("selected");
+      }
+    }
+  }
+
   getPiece(row, col) {
     // Returns piece in row, col, or undefined if not exists.
     for (const piece of this.pieces) {
@@ -46,6 +56,9 @@ class BoardData {
   isEnemy(row, col) {
     //  If there is enemy piece in the cell - return true:
     let piece = this.getPiece(row, col);
-    return piece.player !== game.currentPlayer;
+    if (piece !== undefined) {
+      return piece.player !== game.currentPlayer;
+    }
+    return false;
   }
 }

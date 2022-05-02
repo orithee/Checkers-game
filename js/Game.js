@@ -42,104 +42,64 @@ class Game {
 
   tryMove(piece, row, col) {
     // Check if the click for movement is valid:
-    // TODO: merge the possible moves for more clearly...
 
-    // TODO: here i need to insert the 'if doubleEating = true' - if the plyer try the double -
-    // TODO: do another function with more details(the new array- the first cell and the second cell)
-    // TODO: use the 'tryDoEatingStep' function and improve it...
     // TODO: give some alert - 'choose one or double !'
     // TODO: after all - 'if doubleEating = true'
 
     // 1. If he try possible move of eatingDirections - its okay, do it.
-    if (this.tryDoEatingStep(piece, row, col)) return true;
-    if (doubleStep === true) {
-      doubleStep = false;
+    if (this.tryDoEatingMove(piece, row, col)) return true;
+
+    // 2. If he was in a 'doubleEating' state and did not eat - 'changePlayer' and exit the function:
+    if (doubleEating === true) {
+      doubleEating = false;
       this.changePlayer();
       return true;
     }
-    if (this.checkIfEatingIsOptional())
-      // if (this.tryDoDoubleEating(piece, row, col)) return true;
 
-      // 2. Before he tries a normal step - check: if he has the option to eat - exit the function. He must eat!
-      return false;
+    // 3. Before he tries a normal move - check: if he has the option to eat - exit the function. He must eat!
+    if (this.checkIfEatingIsOptional()) return false;
 
-    // 3. If he can not eat - he can take a normal step.
-    if (this.tryDoNormalStep(piece, row, col)) return true;
+    // 4. If he can't eat - he can take a normal move.
+    if (this.tryDoNormalMove(piece, row, col)) return true;
 
-    // TODO: change the image - to queen if black - clack...
-    // TODO: good photos, check the names of the pieces...
-    // TODO: think how to do big steps...
-
-    // 4. If he did not take a step - exit the function. Now choose a new cell.
+    // 4. If he did not take a move - exit the function. The player has to choose another cell.
     return false;
   }
 
-  tryDoEatingStep(piece, row, col) {
-    // console.log(doubleStep);
-    // TODO: if he click(row, col) on the double cell - remove the first and after this remove the second:
-    // if ( doubleStep[1] !== undifned && doubleStep[1][0] === row && doubleStep[1][1] === col) {
-    //   // remove the first + the second on 'double step + change turn and return true
-    //   tryDoDoubleEating(doubleStep, row, col)
-    //   // TODO: change player... + return doubleStep = undifined
-    //   return true;
-    // }
+  tryDoEatingMove(piece, row, col) {
+    // The function checks if the player has made an eating move:
     let possibleMoves;
-    if (doubleStep === true) {
-      console.log(piece);
-      let double = piece.CheckDoubleEating([piece.row, piece.col]);
-      console.log(double);
-      possibleMoves = double;
+
+    // TODO: improve that lines:
+
+    // 1. If we are in a state of 'doubleEating' the possibleMoves are only of a 'doubleEating'.
+    if (doubleEating === true) {
+      possibleMoves = piece.CheckDoubleEating([piece.row, piece.col]);
     } else {
       possibleMoves = piece.getEatingMoves();
     }
-
+    // 2. If the player clicks on a cell that is not in the options - the 'EatingMove' did not take place - return false:
     if (possibleMoves[0] !== undefined) {
       for (const possibleMove of possibleMoves) {
         if (possibleMove[0] === row && possibleMove[1] === col) {
-          // There is a legal move, so do this:
-          // 1. Remove the enemy piece
+          // 3.a. There is a legal move, so do this:
+          this.removeEnemyPiece(piece, row, col, possibleMove);
 
-          if (possibleMove[0] > piece.row && possibleMove[1] > piece.col) {
-            table.rows[row - 1].cells[col - 1].innerHTML = "";
-            boardData.removePiece(row - 1, col - 1);
-          }
-
-          if (possibleMove[0] > piece.row && piece.col > possibleMove[1]) {
-            table.rows[row - 1].cells[col + 1].innerHTML = "";
-            boardData.removePiece(row - 1, col + 1);
-          }
-
-          if (piece.row > possibleMove[0] && piece.col > possibleMove[1]) {
-            table.rows[row + 1].cells[col + 1].innerHTML = "";
-            boardData.removePiece(row + 1, col + 1);
-          }
-          if (piece.row > possibleMove[0] && possibleMove[1] > piece.col) {
-            table.rows[row + 1].cells[col - 1].innerHTML = "";
-            boardData.removePiece(row + 1, col - 1);
-          }
-
-          // 2. Change the piece location:
+          // 3.b. Change the piece location + Check if he now has the option to "doubleEating":
           if (this.makeTheMove(piece, row, col)) {
-            console.log(piece);
             let double = piece.CheckDoubleEating([piece.row, piece.col]);
-            console.log(double);
             if (double[0] !== undefined) {
               double = piece.filteredMoves(double);
-              console.log(double);
               if (double[0] !== undefined) {
-                // double = double[0];
-                console.log(double);
                 for (let option of double) {
                   let cell = table.rows[option[0]].cells[option[1]];
-                  // TODO: add all options of double step - classlist.
                   cell.classList.add("possible-move");
                 }
-                doubleStep = true;
-                console.log(selectedPiece);
+                doubleEating = true;
                 return true;
               }
             }
-            doubleStep = false;
+            doubleEating = false;
             this.changePlayer();
             return true;
           }
@@ -149,10 +109,29 @@ class Game {
 
     return false;
   }
-  // tryDoDoubleEating(piece, row, col) {
-  //   let possibleMoves = piece.getEatingMoves();
-  //   // doubleStep
-  // }
+
+  removeEnemyPiece(piece, row, col, possibleMove) {
+    // Remove the enemy piece:
+    if (possibleMove[0] > piece.row && possibleMove[1] > piece.col) {
+      table.rows[row - 1].cells[col - 1].innerHTML = "";
+      boardData.removePiece(row - 1, col - 1);
+    }
+
+    if (possibleMove[0] > piece.row && piece.col > possibleMove[1]) {
+      table.rows[row - 1].cells[col + 1].innerHTML = "";
+      boardData.removePiece(row - 1, col + 1);
+    }
+
+    if (piece.row > possibleMove[0] && piece.col > possibleMove[1]) {
+      table.rows[row + 1].cells[col + 1].innerHTML = "";
+      boardData.removePiece(row + 1, col + 1);
+    }
+    if (piece.row > possibleMove[0] && possibleMove[1] > piece.col) {
+      table.rows[row + 1].cells[col - 1].innerHTML = "";
+      boardData.removePiece(row + 1, col - 1);
+    }
+  }
+
   makeTheMove(piece, row, col) {
     // Change the piece location:
     let pieceImage = table.rows[piece.row].cells[piece.col].innerHTML;
@@ -228,7 +207,7 @@ class Game {
     }
   }
 
-  tryDoNormalStep(piece, row, col) {
+  tryDoNormalMove(piece, row, col) {
     let possibleMoves = piece.getNormaleMoves();
     for (const possibleMove of possibleMoves) {
       if (possibleMove[0] === row && possibleMove[1] === col) {

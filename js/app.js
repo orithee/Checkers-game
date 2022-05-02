@@ -1,4 +1,3 @@
-const CHECKERS_BOARD_ID = "checkers-board";
 const BOARD_SIZE = 8;
 
 const WHITE_PLAYER = "white";
@@ -8,12 +7,12 @@ const QUEEN = "queen";
 
 let notYourTurn = document.createElement("div");
 let youMustEat = document.createElement("div");
-let selectedPiece;
 
+let selectedPiece;
 let table;
 let game;
 let boardData;
-let doubleStep = false;
+let doubleEating = false;
 
 function initGame() {
   boardData = new BoardData();
@@ -21,24 +20,28 @@ function initGame() {
   createBoard();
 }
 
-function onCellClick(row, col) {
-  // Remove the alerts "notYourTurn","mustEat" :
+function Conditions() {
+  // If the game is over - exit the function:
+  if (game.winner !== undefined) {
+    return false;
+  }
+  // Remove the alerts "notYourTurn","youMustEat" :
   notYourTurn.remove();
   youMustEat.remove();
+  return true;
+}
 
-  // selectedPiece - (selected in previous click) The current selected piece.
-  //   (row, col)- the current click:
+function onCellClick(row, col) {
+  if (!Conditions()) return;
+
+  // selectedPiece - selected in previous click.
+  // (row, col) - the current click:
   if (selectedPiece !== undefined && game.tryMove(selectedPiece, row, col)) {
-    if (doubleStep === false) {
+    if (doubleEating === false) {
       selectedPiece = undefined;
       boardData.clearBoard();
       game.checkingIfGameOver();
     }
-    // else {
-    //   doubleStep = false;
-    // }
-    //TODO: checking if the next player can do somthing :
-    // game.checkingIfMatte();
   } else {
     boardData.clearBoard();
     game.showPossibleMovesOnBoard(row, col);
@@ -47,7 +50,6 @@ function onCellClick(row, col) {
 
 function createBoard() {
   table = document.createElement("table");
-  table.id = CHECKERS_BOARD_ID;
   document.body.appendChild(table);
   for (let row = 0; row < BOARD_SIZE; row++) {
     const rowElement = table.insertRow();

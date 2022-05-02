@@ -5,26 +5,20 @@ class Game {
   }
 
   showPossibleMovesOnBoard(row, col) {
-    // 1. If the game is over - exit the function:
-    if (this.winner !== undefined) {
-      return;
-    }
-    // TODO: check if there is some EatingDirections options in his turn - if ve have - dont show the regular moves...
-
+    // The possible moves of the pressed cell will appear:
     const piece = boardData.getPiece(row, col);
-    // console.log(piece);
 
-    // 2. If this is not the turn of the player who clicked - exit the function:
+    // 1. If the cell is empty && If this is not the turn of the player who clicked - exit the function:
     if (piece !== undefined && this.currentPlayer !== piece.player) {
       notYourTurn.classList.add("notYourTurn");
-      notYourTurn.textContent = "Not your turn";
+      notYourTurn.textContent = "This is not your turn";
       table.appendChild(notYourTurn);
       selectedPiece = undefined;
       return;
     }
 
     if (piece !== undefined) {
-      // 3. Show possible moves - If there are eating steps - show them. If not - show the normal steps:
+      // 2. Show possible moves - If there are 'eatingMoves' - show them. If not - show the 'normalMoves':
       let possibleMoves;
       possibleMoves = piece.getEatingMoves();
       if (possibleMoves[0] === undefined) {
@@ -44,9 +38,9 @@ class Game {
     // Check if the click for movement is valid:
 
     // TODO: give some alert - 'choose one or double !'
-    // TODO: after all - 'if doubleEating = true'
+    // TODO: Check exactly the status of 'doubleEating' - true / false all the code
 
-    // 1. If he try possible move of eatingDirections - its okay, do it.
+    // 1. If he try possible move of eatingMove - its okay, do it.
     if (this.tryDoEatingMove(piece, row, col)) return true;
 
     // 2. If he was in a 'doubleEating' state and did not eat - 'changePlayer' and exit the function:
@@ -57,7 +51,7 @@ class Game {
     }
 
     // 3. Before he tries a normal move - check: if he has the option to eat - exit the function. He must eat!
-    if (this.checkIfEatingIsOptional()) return false;
+    if (this.CheckIfEatingIsPossible()) return false;
 
     // 4. If he can't eat - he can take a normal move.
     if (this.tryDoNormalMove(piece, row, col)) return true;
@@ -69,8 +63,6 @@ class Game {
   tryDoEatingMove(piece, row, col) {
     // The function checks if the player has made an eating move:
     let possibleMoves;
-
-    // TODO: improve that lines:
 
     // 1. If we are in a state of 'doubleEating' the possibleMoves are only of a 'doubleEating'.
     if (doubleEating === true) {
@@ -85,7 +77,7 @@ class Game {
           // 3.a. There is a legal move, so do this:
           this.removeEnemyPiece(piece, row, col, possibleMove);
 
-          // 3.b. Change the piece location + Check if he now has the option to "doubleEating":
+          // 3.b. Change the piece location + Check if now he has the option to "doubleEating":
           if (this.makeTheMove(piece, row, col)) {
             let double = piece.CheckDoubleEating([piece.row, piece.col]);
             if (double[0] !== undefined) {
@@ -111,7 +103,8 @@ class Game {
   }
 
   removeEnemyPiece(piece, row, col, possibleMove) {
-    // Remove the enemy piece:
+    // Remove the enemy piece - The following code will work on all possible types of eating in the game :
+
     if (possibleMove[0] > piece.row && possibleMove[1] > piece.col) {
       table.rows[row - 1].cells[col - 1].innerHTML = "";
       boardData.removePiece(row - 1, col - 1);
@@ -133,16 +126,16 @@ class Game {
   }
 
   makeTheMove(piece, row, col) {
-    // Change the piece location:
+    // 1. Change the piece location + his image:
     let pieceImage = table.rows[piece.row].cells[piece.col].innerHTML;
     table.rows[piece.row].cells[piece.col].innerHTML = "";
     table.rows[row].cells[col].innerHTML = pieceImage;
 
-    // boardData.removePiece(row, col);
     piece.row = row;
     piece.col = col;
 
-    // If the piece has reached the last row - make it "QUEEN"
+    // 2. If the piece has reached the last row - make it "QUEEN":
+
     if (
       (this.currentPlayer === WHITE_PLAYER &&
         piece.row === 7 &&
@@ -160,25 +153,10 @@ class Game {
       table.rows[piece.row].cells[piece.col].appendChild(image);
     }
     boardData.clearBoard();
-
-    // TODO: if he have more steps to do - return false here.
-    // let double = piece.CheckDoubleEating([piece.row, piece.col]);
-    // if (double[0] !== undefined) {
-    //   double = piece.filteredMoves(double);
-    //   if (double[0] !== undefined) {
-    //     double = double[0];
-    //     console.log(double);
-    //     const cell = table.rows[double[0]].cells[double[1]];
-    //     cell.classList.add("possible-move");
-    //     return false;
-    //   }
-    // }
-
-    // changePlayer()
     return true;
   }
 
-  checkIfEatingIsOptional() {
+  CheckIfEatingIsPossible() {
     // Checks if the current player has the option to make a eating move:
     // 1. Get an array of this player pieces:
     let piecesThisPlayer = [];
@@ -211,7 +189,7 @@ class Game {
     let possibleMoves = piece.getNormaleMoves();
     for (const possibleMove of possibleMoves) {
       if (possibleMove[0] === row && possibleMove[1] === col) {
-        // There is a legal move, so do this - Change the piece location:
+        // There is a legal move, so do this - Change the piece location + Finish this turn:
         if (this.makeTheMove(piece, row, col)) {
           this.changePlayer();
           return true;
@@ -220,6 +198,7 @@ class Game {
     }
     return false;
   }
+
   changePlayer() {
     this.currentPlayer =
       this.currentPlayer === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
@@ -228,7 +207,7 @@ class Game {
   }
 
   checkingIfGameOver() {
-    // 1. Get an array of the next player's pieces
+    // 1. Get an array of the next player's pieces:
     let piecesNextPlayer = [];
     for (let piece of boardData.pieces) {
       if (piece.player === this.currentPlayer) {
@@ -252,7 +231,7 @@ class Game {
       piecesNextPlayer[0] === undefined ||
       possibleMovesThisTurn[0] === undefined
     ) {
-      console.log("game over");
+      console.log("Game - over");
       this.announceTheWinner();
       this.endOfTheGame();
     }

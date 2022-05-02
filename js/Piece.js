@@ -81,6 +81,7 @@ class Piece {
   }
 
   CheckDoubleEating(cell) {
+    // This function will work even if the 'doubleEating' is of a queen and even if it is of a pawn:
     let nextEating = [];
     let directions = [-1, 1];
     for (let numberLoop1 of directions) {

@@ -14,25 +14,8 @@ let game;
 let boardData;
 let doubleEating = false;
 
-function initGame() {
-  boardData = new BoardData();
-  game = new Game(WHITE_PLAYER);
-  createBoard();
-}
-
-function Conditions() {
-  // If the game is over - exit the function:
-  if (game.winner !== undefined) {
-    return false;
-  }
-  // Remove the alerts "notYourTurn","youMustEat" :
-  notYourTurn.remove();
-  youMustEat.remove();
-  return true;
-}
-
 function onCellClick(row, col) {
-  if (!Conditions()) return;
+  if (!game.Conditions()) return;
 
   // selectedPiece - selected in previous click.
   // (row, col) - the current click:
@@ -40,7 +23,7 @@ function onCellClick(row, col) {
     if (doubleEating === false) {
       selectedPiece = undefined;
       boardData.clearBoard();
-      game.checkingIfGameOver();
+      boardData.checkingIfGameOver();
     }
   } else {
     boardData.clearBoard();
@@ -48,7 +31,14 @@ function onCellClick(row, col) {
   }
 }
 
-function createBoard() {
+function initGame() {
+  // Create pieces:
+  boardData = new BoardData();
+
+  // Create players and a winner:
+  game = new Game(WHITE_PLAYER);
+
+  // Create a board:
   table = document.createElement("table");
   document.body.appendChild(table);
   for (let row = 0; row < BOARD_SIZE; row++) {
@@ -63,18 +53,7 @@ function createBoard() {
       }
     }
   }
-  addImages();
-}
-
-function addImages() {
-  // Add pieces images to board
-  for (let piece of boardData.pieces) {
-    const cell = table.rows[piece.row].cells[piece.col];
-    const image = document.createElement("img");
-    image.src = "images/" + piece.player + ".png";
-    image.draggable = false;
-    cell.appendChild(image);
-  }
+  boardData.addImages();
 }
 
 window.addEventListener("load", initGame);

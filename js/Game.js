@@ -4,21 +4,34 @@ class Game {
     this.winner = undefined;
   }
 
+  Conditions() {
+    // Remove the alerts "notYourTurn","youMustEat" :
+    notYourTurn.remove();
+    youMustEat.remove();
+
+    // If the game is over - exit the function:
+    if (game.winner !== undefined) {
+      return false;
+    }
+    return true;
+  }
+
   showPossibleMovesOnBoard(row, col) {
     // The possible moves of the pressed cell will appear:
     const piece = boardData.getPiece(row, col);
 
-    // 1. If the cell is empty && If this is not the turn of the player who clicked - exit the function:
-    if (piece !== undefined && this.currentPlayer !== piece.player) {
-      notYourTurn.classList.add("notYourTurn");
-      notYourTurn.textContent = "This is not your turn";
-      table.appendChild(notYourTurn);
-      selectedPiece = undefined;
-      return;
-    }
-
+    // 1. If the cell is empty (undefined) skip it:
     if (piece !== undefined) {
-      // 2. Show possible moves - If there are 'eatingMoves' - show them. If not - show the 'normalMoves':
+      // 2. If this is not the turn of the player who clicked - exit the function:
+      if (this.currentPlayer !== piece.player) {
+        notYourTurn.classList.add("notYourTurn");
+        notYourTurn.textContent = "This is not your turn";
+        table.appendChild(notYourTurn);
+        selectedPiece = undefined;
+        return;
+      }
+
+      // 3. Show possible moves - If there are 'eatingMoves' - show them. If not - show the 'normalMoves':
       let possibleMoves;
       possibleMoves = piece.getEatingMoves();
       if (possibleMoves[0] === undefined) {
@@ -56,18 +69,18 @@ class Game {
     // 4. If he can't eat - he can take a normal move.
     if (this.tryDoNormalMove(piece, row, col)) return true;
 
-    // 4. If he did not take a move - exit the function. The player has to choose another cell.
+    // 5. If he did not take a move - exit the function. The player has to choose another cell.
     return false;
   }
 
   tryDoEatingMove(piece, row, col) {
     // The function checks if the player has made an eating move:
-    let possibleMoves;
-
     // 1. If we are in a state of 'doubleEating' the possibleMoves are only of a 'doubleEating'.
+    let possibleMoves;
     if (doubleEating === true) {
       possibleMoves = piece.CheckDoubleEating([piece.row, piece.col]);
     } else {
+      // Otherwise - 'eatingMoves' per piece:
       possibleMoves = piece.getEatingMoves();
     }
     // 2. If the player clicks on a cell that is not in the options - the 'EatingMove' did not take place - return false:
@@ -75,7 +88,7 @@ class Game {
       for (const possibleMove of possibleMoves) {
         if (possibleMove[0] === row && possibleMove[1] === col) {
           // 3.a. There is a legal move, so do this:
-          this.removeEnemyPiece(piece, row, col, possibleMove);
+          boardData.removeEnemyPiece(piece, row, col, possibleMove);
 
           // 3.b. Change the piece location + Check if now he has the option to "doubleEating":
           if (this.makeTheMove(piece, row, col)) {
@@ -102,29 +115,6 @@ class Game {
     return false;
   }
 
-  removeEnemyPiece(piece, row, col, possibleMove) {
-    // Remove the enemy piece - The following code will work on all possible types of eating in the game :
-
-    if (possibleMove[0] > piece.row && possibleMove[1] > piece.col) {
-      table.rows[row - 1].cells[col - 1].innerHTML = "";
-      boardData.removePiece(row - 1, col - 1);
-    }
-
-    if (possibleMove[0] > piece.row && piece.col > possibleMove[1]) {
-      table.rows[row - 1].cells[col + 1].innerHTML = "";
-      boardData.removePiece(row - 1, col + 1);
-    }
-
-    if (piece.row > possibleMove[0] && piece.col > possibleMove[1]) {
-      table.rows[row + 1].cells[col + 1].innerHTML = "";
-      boardData.removePiece(row + 1, col + 1);
-    }
-    if (piece.row > possibleMove[0] && possibleMove[1] > piece.col) {
-      table.rows[row + 1].cells[col - 1].innerHTML = "";
-      boardData.removePiece(row + 1, col - 1);
-    }
-  }
-
   makeTheMove(piece, row, col) {
     // 1. Change the piece location + his image:
     let pieceImage = table.rows[piece.row].cells[piece.col].innerHTML;
@@ -135,7 +125,6 @@ class Game {
     piece.col = col;
 
     // 2. If the piece has reached the last row - make it "QUEEN":
-
     if (
       (this.currentPlayer === WHITE_PLAYER &&
         piece.row === 7 &&
@@ -145,7 +134,6 @@ class Game {
         piece.type === PAWN)
     ) {
       piece.type = QUEEN;
-      console.log(piece.type);
       const image = document.createElement("img");
       image.src = "images/" + this.currentPlayer + "-queen.png";
       image.draggable = false;
@@ -204,56 +192,5 @@ class Game {
       this.currentPlayer === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
     document.querySelector(".Player-1").classList.toggle("player--active");
     document.querySelector(".Player-2").classList.toggle("player--active");
-  }
-
-  checkingIfGameOver() {
-    // 1. Get an array of the next player's pieces:
-    let piecesNextPlayer = [];
-    for (let piece of boardData.pieces) {
-      if (piece.player === this.currentPlayer) {
-        piecesNextPlayer.push(piece);
-      }
-    }
-
-    // 2. Get an array of possible moves of each piece of the player who played last:
-    let possibleMovesThisTurn = [];
-    for (let piece of piecesNextPlayer) {
-      possibleMovesThisTurn = possibleMovesThisTurn.concat(
-        piece.getEatingMoves()
-      );
-      possibleMovesThisTurn = possibleMovesThisTurn.concat(
-        piece.getNormaleMoves()
-      );
-    }
-
-    // 3. If he has no more pieces / has no possible move - he has lost the game:
-    if (
-      piecesNextPlayer[0] === undefined ||
-      possibleMovesThisTurn[0] === undefined
-    ) {
-      console.log("Game - over");
-      this.announceTheWinner();
-      this.endOfTheGame();
-    }
-  }
-
-  announceTheWinner() {
-    // The player whose turn is now lost - so the other player is the winner:
-    game.winner =
-      this.currentPlayer === WHITE_PLAYER ? BLACK_PLAYER : WHITE_PLAYER;
-  }
-
-  endOfTheGame() {
-    if (game.winner !== undefined) {
-      // We have a winner! Finish the game
-      const winnerPopup = document.createElement("div");
-      const winner = game.winner.charAt(0).toUpperCase() + game.winner.slice(1);
-      winnerPopup.classList.add("Victory-jumps");
-      winnerPopup.textContent = winner + " player wins!";
-      console.log(winnerPopup.textContent);
-      table.appendChild(winnerPopup);
-      document.querySelector(".Player-1").classList.toggle("player--active");
-      document.querySelector(".Player-2").classList.toggle("player--active");
-    }
   }
 }

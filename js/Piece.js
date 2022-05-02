@@ -6,6 +6,29 @@ class Piece {
     this.player = player;
   }
 
+  getEatingMoves() {
+    // Get the possible eating moves:
+    let moves;
+    if (this.type === PAWN) {
+      moves = this.getPawnEatingMoves();
+    } else {
+      moves = this.getQueenEatingMoves();
+    }
+    return this.filteredMoves(moves);
+  }
+
+  getNormaleMoves() {
+    // Get the possible normal moves :
+    let moves;
+
+    if (this.type === PAWN) {
+      moves = this.getPawnNormalMoves();
+    } else {
+      moves = this.getQueenNormalMoves();
+    }
+    return this.filteredMoves(moves);
+  }
+
   filteredMoves(moves) {
     // Get filtered absolute moves:
     let filteredMoves = [];
@@ -24,15 +47,24 @@ class Piece {
     return filteredMoves;
   }
 
-  getEatingMoves() {
-    // Get the possible eating moves:
-    let moves;
-    if (this.type === PAWN) {
-      moves = this.getPawnEatingMoves();
-    } else {
-      moves = this.getQueenEatingMoves();
+  getPawnEatingMoves() {
+    // Get the possible eating moves of 'Pawn piece':
+    let result = [];
+    let direction = 1;
+    if (this.player === BLACK_PLAYER) {
+      direction = -1;
     }
-    return this.filteredMoves(moves);
+
+    let Sides = [-1, 1];
+    for (let side of Sides) {
+      if (
+        boardData.isEnemy(this.row + direction, this.col + side) &&
+        boardData.isEmpty(this.row + direction * 2, this.col + side * 2)
+      ) {
+        result.push([this.row + direction * 2, this.col + side * 2]);
+      }
+    }
+    return result;
   }
 
   getQueenEatingMoves() {
@@ -56,63 +88,7 @@ class Piece {
         }
       }
     }
-    console.log(result);
     return result;
-  }
-
-  getPawnEatingMoves() {
-    // Get the possible eating moves of 'Pawn piece':
-    let result = [];
-    let direction = 1;
-    if (this.player === BLACK_PLAYER) {
-      direction = -1;
-    }
-
-    let Sides = [-1, 1];
-    for (let side of Sides) {
-      if (
-        boardData.isEnemy(this.row + direction, this.col + side) &&
-        boardData.isEmpty(this.row + direction * 2, this.col + side * 2)
-      ) {
-        result.push([this.row + direction * 2, this.col + side * 2]);
-      }
-    }
-    return result;
-  }
-
-  CheckDoubleEating(cell) {
-    // This function will work even if the 'doubleEating' is of a queen and even if it is of a pawn:
-    let nextEating = [];
-    let directions = [-1, 1];
-    for (let numberLoop1 of directions) {
-      for (let numberLoop2 of directions) {
-        if (
-          boardData.isEnemy(cell[0] + numberLoop1, cell[1] + numberLoop2) &&
-          boardData.isEmpty(
-            cell[0] + numberLoop1 * 2,
-            cell[1] + numberLoop2 * 2
-          )
-        ) {
-          nextEating.push([
-            cell[0] + numberLoop1 * 2,
-            cell[1] + numberLoop2 * 2,
-          ]);
-        }
-      }
-    }
-    return nextEating;
-  }
-
-  getNormaleMoves() {
-    // Get the possible normal moves :
-    let moves;
-
-    if (this.type === PAWN) {
-      moves = this.getPawnNormalMoves();
-    } else {
-      moves = this.getQueenNormalMoves();
-    }
-    return this.filteredMoves(moves);
   }
 
   getPawnNormalMoves() {
@@ -151,5 +127,28 @@ class Piece {
       }
     }
     return result;
+  }
+
+  CheckDoubleEating(cell) {
+    // This function will work even if the 'doubleEating' is of a queen and even if it is of a pawn:
+    let nextEating = [];
+    let directions = [-1, 1];
+    for (let numberLoop1 of directions) {
+      for (let numberLoop2 of directions) {
+        if (
+          boardData.isEnemy(cell[0] + numberLoop1, cell[1] + numberLoop2) &&
+          boardData.isEmpty(
+            cell[0] + numberLoop1 * 2,
+            cell[1] + numberLoop2 * 2
+          )
+        ) {
+          nextEating.push([
+            cell[0] + numberLoop1 * 2,
+            cell[1] + numberLoop2 * 2,
+          ]);
+        }
+      }
+    }
+    return nextEating;
   }
 }

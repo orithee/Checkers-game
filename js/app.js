@@ -4,7 +4,7 @@ const BOARD_SIZE = 8;
 const WHITE_PLAYER = "white";
 const BLACK_PLAYER = "black";
 const PAWN = "pawn";
-const KING = "king";
+const QUEEN = "queen";
 
 let notYourTurn = document.createElement("div");
 let youMustEat = document.createElement("div");
@@ -13,6 +13,7 @@ let selectedPiece;
 let table;
 let game;
 let boardData;
+let doubleStep = false;
 
 function initGame() {
   boardData = new BoardData();
@@ -28,9 +29,14 @@ function onCellClick(row, col) {
   // selectedPiece - (selected in previous click) The current selected piece.
   //   (row, col)- the current click:
   if (selectedPiece !== undefined && game.tryMove(selectedPiece, row, col)) {
-    selectedPiece = undefined;
-    boardData.clearBoard();
-    game.checkingIfGameOver();
+    if (doubleStep === false) {
+      selectedPiece = undefined;
+      boardData.clearBoard();
+      game.checkingIfGameOver();
+    }
+    // else {
+    //   doubleStep = false;
+    // }
     //TODO: checking if the next player can do somthing :
     // game.checkingIfMatte();
   } else {
@@ -63,7 +69,7 @@ function addImages() {
   for (let piece of boardData.pieces) {
     const cell = table.rows[piece.row].cells[piece.col];
     const image = document.createElement("img");
-    image.src = "images/" + piece.player + ".jpeg";
+    image.src = "images/" + piece.player + ".png";
     image.draggable = false;
     cell.appendChild(image);
   }

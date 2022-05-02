@@ -7,7 +7,7 @@ class Piece {
   }
 
   filteredMoves(moves) {
-    // Get filtered absolute moves
+    // Get filtered absolute moves:
     let filteredMoves = [];
     for (const absoluteMove of moves) {
       const absoluteRow = absoluteMove[0];
@@ -25,33 +25,18 @@ class Piece {
   }
 
   getEatingMoves() {
+    // Get the possible eating moves:
     let moves;
-
     if (this.type === PAWN) {
       moves = this.getPawnEatingMoves();
-    }
-    if (this.type === QUEEN) {
+    } else {
       moves = this.getQueenEatingMoves();
     }
-
-    let basicMoveEating = this.filteredMoves(moves);
-
-    // Add double eating( if availaible)
-    // if (basicMoveEating[0] !== undefined) {
-    //   let doubleEating = this.CheckDoubleEating(basicMoveEating[0]);
-    //   if (doubleEating !== undefined) {
-    //     doubleEating = this.filteredMoves([doubleEating]);
-    //     // console.log(doubleEating);
-    //   }
-    //   if (doubleEating !== undefined) {
-    //     basicMoveEating.push(doubleEating[0]);
-    //   }
-    // }
-    // console.log(basicMoveEating);
-    return basicMoveEating;
+    return this.filteredMoves(moves);
   }
 
   getQueenEatingMoves() {
+    // Get the possible eating moves of 'Queen piece':
     let result = [];
     let directionRow = [-1, -1, 1, 1];
     let directionCol = [-1, 1, -1, 1];
@@ -76,6 +61,7 @@ class Piece {
   }
 
   getPawnEatingMoves() {
+    // Get the possible eating moves of 'Pawn piece':
     let result = [];
     let direction = 1;
     if (this.player === BLACK_PLAYER) {
@@ -91,51 +77,45 @@ class Piece {
         result.push([this.row + direction * 2, this.col + side * 2]);
       }
     }
-
-    // TODO: add function that take the results and check if there is double eating
-    // TODO: if its availaible - add to 'result array' + keep it in new array seperately
-    // TODO: declare a global variable like 'let doubleEating = false'.
-    // TODO: if doubleEating is availaible change it to 'true' and use it after in the try move.
-    // TODO: add this functionality to the queen.
-    // console.log(result);
     return result;
   }
 
   CheckDoubleEating(cell) {
     let nextEating = [];
     let directions = [-1, 1];
-    for (let number of directions) {
-      for (let revere of directions) {
+    for (let numberLoop1 of directions) {
+      for (let numberLoop2 of directions) {
         if (
-          boardData.isEnemy(cell[0] + number, cell[1] + revere) &&
-          boardData.isEmpty(cell[0] + number * 2, cell[1] + revere * 2)
+          boardData.isEnemy(cell[0] + numberLoop1, cell[1] + numberLoop2) &&
+          boardData.isEmpty(
+            cell[0] + numberLoop1 * 2,
+            cell[1] + numberLoop2 * 2
+          )
         ) {
-          nextEating.push([cell[0] + number * 2, cell[1] + revere * 2]);
+          nextEating.push([
+            cell[0] + numberLoop1 * 2,
+            cell[1] + numberLoop2 * 2,
+          ]);
         }
       }
     }
-    // doubleStep = [cell, nextEating[0]];
-    // console.log(doubleStep);
-    console.log(nextEating);
     return nextEating;
   }
 
   getNormaleMoves() {
-    // TODO: add the Queen steps.
-    // Find the possibleMoves:
+    // Get the possible normal moves :
     let moves;
 
     if (this.type === PAWN) {
       moves = this.getPawnNormalMoves();
-    }
-    if (this.type === QUEEN) {
+    } else {
       moves = this.getQueenNormalMoves();
     }
     return this.filteredMoves(moves);
   }
 
   getPawnNormalMoves() {
-    //   TODO: checking if he can eat some piece. if he can - exsit the function.
+    // Get the possible normal moves of 'Pawn piece':
     let result = [];
     let direction = 1;
     if (this.player === BLACK_PLAYER) {
@@ -153,6 +133,7 @@ class Piece {
   }
 
   getQueenNormalMoves() {
+    // Get the possible normal moves of 'Queen piece':
     let result = [];
     let directionRow = [-1, -1, 1, 1];
     let directionCol = [-1, 1, -1, 1];
@@ -168,7 +149,6 @@ class Piece {
         }
       }
     }
-    console.log(result);
     return result;
   }
 }

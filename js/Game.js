@@ -166,7 +166,7 @@ class Game {
     if (possibleMovesThisTurn[0] === undefined) {
       return false;
     } else {
-      youMustEat.classList.add("Must-eat");
+      youMustEat.classList.add("must-eat");
       youMustEat.textContent = "You Must Eat!";
       table.appendChild(youMustEat);
       return true;
@@ -190,7 +190,7 @@ class Game {
   changePlayer() {
     this.currentPlayer =
       this.currentPlayer === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
-    document.querySelector(".Player-1").classList.toggle("player--active");
-    document.querySelector(".Player-2").classList.toggle("player--active");
+    document.querySelector(".player-1").classList.toggle("player--active");
+    document.querySelector(".player-2").classList.toggle("player--active");
   }
 }

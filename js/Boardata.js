@@ -8,12 +8,12 @@ class BoardData {
     let piecesArray = [];
     let col = [0, 2, 4, 6];
     for (let number of col) {
-      //   piecesArray.push(new Piece(0, number + 1, PAWN, WHITE_PLAYER));
-      //   piecesArray.push(new Piece(1, number, PAWN, WHITE_PLAYER));
+      piecesArray.push(new Piece(0, number + 1, PAWN, WHITE_PLAYER));
+      piecesArray.push(new Piece(1, number, PAWN, WHITE_PLAYER));
       piecesArray.push(new Piece(2, number + 1, PAWN, WHITE_PLAYER));
       piecesArray.push(new Piece(5, number, PAWN, BLACK_PLAYER));
       piecesArray.push(new Piece(6, number + 1, PAWN, BLACK_PLAYER));
-      piecesArray.push(new Piece(1, number, PAWN, BLACK_PLAYER));
+      piecesArray.push(new Piece(7, number, PAWN, BLACK_PLAYER));
     }
     return piecesArray;
   }
@@ -121,28 +121,33 @@ class BoardData {
       piecesNextPlayer[0] === undefined ||
       possibleMovesThisTurn[0] === undefined
     ) {
-      //   game.winner = game.currentPlayer;
-      this.announceTheWinner();
+      game.changePlayer();
+      game.winner = game.currentPlayer;
       this.endOfTheGame();
     }
-  }
-
-  announceTheWinner() {
-    // The player whose turn is now lost - so the other player is the winner:
-    game.winner =
-      game.currentPlayer === WHITE_PLAYER ? BLACK_PLAYER : WHITE_PLAYER;
   }
 
   endOfTheGame() {
     if (game.winner !== undefined) {
       // We have a winner! Finish the game:
-      const winnerPopup = document.createElement("div");
       const winner = game.winner.charAt(0).toUpperCase() + game.winner.slice(1);
-      winnerPopup.classList.add("Victory-jumps");
+      winnerPopup.classList.add("victory-jumps");
       winnerPopup.textContent = winner + " player wins!";
       table.appendChild(winnerPopup);
-      document.querySelector(".Player-1").classList.toggle("player--active");
-      document.querySelector(".Player-2").classList.toggle("player--active");
+      // newGame.id = "new-game";
+      newGame.classList.add("new-game");
+      newGame.textContent = "🔄 New - game";
+      table.appendChild(newGame);
+      newGame.addEventListener("click", () => this.Restart());
     }
+  }
+
+  Restart() {
+    table.remove();
+    initGame();
+    winnerPopup.classList.remove();
+    newGame.classList.remove();
+    document.querySelector(".player-1").classList.add("player--active");
+    document.querySelector(".player-2").classList.remove("player--active");
   }
 }

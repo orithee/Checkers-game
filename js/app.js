@@ -5,8 +5,10 @@ const BLACK_PLAYER = "black";
 const PAWN = "pawn";
 const QUEEN = "queen";
 
-let notYourTurn = document.createElement("div");
-let youMustEat = document.createElement("div");
+const notYourTurn = document.createElement("div");
+const youMustEat = document.createElement("div");
+const winnerPopup = document.createElement("div");
+const newGame = document.createElement("button");
 
 let selectedPiece;
 let table;
@@ -34,11 +36,9 @@ function onCellClick(row, col) {
 function initGame() {
   // Create pieces:
   boardData = new BoardData();
-
   // Create players and a winner:
   game = new Game(WHITE_PLAYER);
 
-  // Create a board:
   table = document.createElement("table");
   document.body.appendChild(table);
   for (let row = 0; row < BOARD_SIZE; row++) {

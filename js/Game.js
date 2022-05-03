@@ -87,28 +87,27 @@ class Game {
     if (possibleMoves[0] !== undefined) {
       for (const possibleMove of possibleMoves) {
         if (possibleMove[0] === row && possibleMove[1] === col) {
-          // 3.a. There is a legal move, so find 'enemyPieceLocation' and remove it -'removePiece' :
+          // 3. There is a legal move, so find 'enemyPieceLocation' and remove it + 'makeTheMove' :
           boardData.enemyPieceLocation(piece, row, col, possibleMove);
+          this.makeTheMove(piece, row, col);
 
-          // 3.b. Change the piece location + Check if now he has the option to "doubleEating":
-          if (this.makeTheMove(piece, row, col)) {
-            let double = piece.CheckDoubleEating([piece.row, piece.col]);
+          // 4. Check if now he has the option to "doubleEating":
+          let double = piece.CheckDoubleEating([piece.row, piece.col]);
+          if (double[0] !== undefined) {
+            double = piece.filteredMoves(double);
             if (double[0] !== undefined) {
-              double = piece.filteredMoves(double);
-              if (double[0] !== undefined) {
-                for (let option of double) {
-                  let cell = table.rows[option[0]].cells[option[1]];
-                  cell.classList.add("possible-move");
-                }
-                doubleEating = true;
-                this.oneTimeExplanatoryMessage();
-                return true;
+              for (let option of double) {
+                let cell = table.rows[option[0]].cells[option[1]];
+                cell.classList.add("possible-move");
               }
+              doubleEating = true;
+              this.oneTimeExplanatoryMessage();
+              return true;
             }
-            doubleEating = false;
-            this.changeCurrentPlayer();
-            return true;
           }
+          doubleEating = false;
+          this.changeCurrentPlayer();
+          return true;
         }
       }
     }
@@ -126,20 +125,18 @@ class Game {
     piece.col = col;
 
     // 2. If the piece has reached the last row - make it "QUEEN":
-    if (
-      (this.currentPlayer === WHITE_PLAYER &&
-        piece.row === 7 &&
-        piece.type === PAWN) ||
-      (this.currentPlayer === BLACK_PLAYER &&
-        piece.row === 0 &&
-        piece.type === PAWN)
-    ) {
-      piece.type = QUEEN;
-      const image = document.createElement("img");
-      image.src = "images/" + this.currentPlayer + "-queen.png";
-      image.draggable = false;
-      table.rows[piece.row].cells[piece.col].innerHTML = "";
-      table.rows[piece.row].cells[piece.col].appendChild(image);
+    if (piece.type === PAWN) {
+      if (
+        (this.currentPlayer === WHITE_PLAYER && piece.row === 7) ||
+        (this.currentPlayer === BLACK_PLAYER && piece.row === 0)
+      ) {
+        piece.type = QUEEN;
+        const image = document.createElement("img");
+        image.src = "images/" + this.currentPlayer + "-queen.png";
+        image.draggable = false;
+        table.rows[piece.row].cells[piece.col].innerHTML = "";
+        table.rows[piece.row].cells[piece.col].appendChild(image);
+      }
     }
     boardData.clearBoard();
     return true;

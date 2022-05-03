@@ -117,10 +117,7 @@ class BoardData {
     }
 
     // 3. If he has no more pieces / has no possible move - he has lost the game:
-    if (
-      piecesNextPlayer[0] === undefined ||
-      possibleMovesThisTurn[0] === undefined
-    ) {
+    if (possibleMovesThisTurn[0] === undefined) {
       game.changeCurrentPlayer();
       game.winner = game.currentPlayer;
       this.endOfTheGame();

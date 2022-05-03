@@ -98,14 +98,12 @@ class Piece {
     if (this.player === BLACK_PLAYER) {
       direction = -1;
     }
-
-    if (boardData.isEmpty(this.row + direction, this.col + -1)) {
-      result.push([this.row + direction, this.col + -1]);
+    let Sides = [-1, 1];
+    for (const side of Sides) {
+      if (boardData.isEmpty(this.row + direction, this.col + side)) {
+        result.push([this.row + direction, this.col + side]);
+      }
     }
-    if (boardData.isEmpty(this.row + direction, this.col + 1)) {
-      result.push([this.row + direction, this.col + 1]);
-    }
-
     return result;
   }
 

@@ -87,8 +87,8 @@ class Game {
     if (possibleMoves[0] !== undefined) {
       for (const possibleMove of possibleMoves) {
         if (possibleMove[0] === row && possibleMove[1] === col) {
-          // 3. There is a legal move, so find 'enemyPieceLocation' and remove it + 'makeTheMove' :
-          boardData.enemyPieceLocation(piece, row, col, possibleMove);
+          // 3. There is a legal move, so 'removePieceEaten' + 'makeTheMove' :
+          boardData.removePieceEaten(piece, row, col, possibleMove);
           this.makeTheMove(piece, row, col);
 
           // 4. Check if now he has the option to "doubleEating":

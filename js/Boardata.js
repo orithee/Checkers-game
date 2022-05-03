@@ -48,8 +48,23 @@ class BoardData {
     }
   }
 
-  removePiece(row, col) {
-    // Remove the enemy piece from the board ! :
+  removePieceEaten(piece, row, col, possibleMove) {
+    //1. Find the exact location of the piece eaten :
+    if (possibleMove[0] > piece.row && possibleMove[1] > piece.col) {
+      row -= 1;
+      col -= 1;
+    } else if (possibleMove[0] > piece.row && piece.col > possibleMove[1]) {
+      row -= 1;
+      col += 1;
+    } else if (piece.row > possibleMove[0] && piece.col > possibleMove[1]) {
+      row += 1;
+      col += 1;
+    } else if (piece.row > possibleMove[0] && possibleMove[1] > piece.col) {
+      row += 1;
+      col -= 1;
+    }
+
+    //2. Remove the enemy piece from the board ! :
     table.rows[row].cells[col].innerHTML = "";
     for (let i = 0; i < this.pieces.length; i++) {
       const piece = this.pieces[i];
@@ -57,29 +72,6 @@ class BoardData {
         this.pieces.splice(i, 1);
       }
     }
-  }
-
-  enemyPieceLocation(piece, row, col, possibleMove) {
-    // Find the exact location of the piece eaten :
-    if (possibleMove[0] > piece.row && possibleMove[1] > piece.col) {
-      row -= 1;
-      col -= 1;
-    }
-
-    if (possibleMove[0] > piece.row && piece.col > possibleMove[1]) {
-      row -= 1;
-      col += 1;
-    }
-
-    if (piece.row > possibleMove[0] && piece.col > possibleMove[1]) {
-      row += 1;
-      col += 1;
-    }
-    if (piece.row > possibleMove[0] && possibleMove[1] > piece.col) {
-      row += 1;
-      col -= 1;
-    }
-    this.removePiece(row, col);
   }
 
   isEmpty(row, col) {

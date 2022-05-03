@@ -40,6 +40,7 @@ function initGame() {
   // Create players and a winner:
   game = new Game(WHITE_PLAYER);
 
+  // Create a table:
   table = document.createElement("table");
   document.body.appendChild(table);
   for (let row = 0; row < BOARD_SIZE; row++) {

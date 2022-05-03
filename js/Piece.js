@@ -30,7 +30,7 @@ class Piece {
   }
 
   filteredMoves(moves) {
-    // Get filtered absolute moves:
+    // Get filtered moves - Return only the cells inside the board:
     let filteredMoves = [];
     for (const absoluteMove of moves) {
       const absoluteRow = absoluteMove[0];

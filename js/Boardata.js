@@ -4,7 +4,7 @@ class BoardData {
   }
 
   initPieces() {
-    // Create list of pieces (32 total)
+    // Create list of pieces (24 total):
     let piecesArray = [];
     let col = [0, 2, 4, 6];
     for (let number of col) {
@@ -19,7 +19,7 @@ class BoardData {
   }
 
   addImages() {
-    // Add pieces images to board
+    // Add pieces images to board:
     for (let piece of this.pieces) {
       const cell = table.rows[piece.row].cells[piece.col];
       const image = document.createElement("img");
@@ -64,7 +64,7 @@ class BoardData {
       col -= 1;
     }
 
-    //2. Remove the enemy piece from the board ! :
+    //2. Remove the piece eaten from the board :
     table.rows[row].cells[col].innerHTML = "";
     for (let i = 0; i < this.pieces.length; i++) {
       const piece = this.pieces[i];
@@ -75,7 +75,7 @@ class BoardData {
   }
 
   isEmpty(row, col) {
-    //  If there is nothing in the cell - return true:
+    //  If there is no piece in the cell - return true:
     return this.getPiece(row, col) === undefined;
   }
 

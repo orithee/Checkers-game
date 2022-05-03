@@ -49,10 +49,6 @@ class Game {
 
   tryMove(piece, row, col) {
     // Check if the click for movement is valid:
-
-    // TODO: give some alert - 'choose one or double !'
-    // TODO: Check exactly the status of 'doubleEating' - true / false all the code
-
     // 1. If he try possible move of eatingMove - its okay, do it.
     if (this.tryDoEatingMove(piece, row, col)) return true;
 
@@ -75,14 +71,14 @@ class Game {
 
   tryDoEatingMove(piece, row, col) {
     // The function checks if the player has made an eating move:
-    // 1. If we are in a state of 'doubleEating' the possibleMoves are only of a 'doubleEating'.
+    // 1. If we are in a state of 'doubleEating' the possibleMoves are 'doubleEating'. else - 'getEatingMoves'
     let possibleMoves;
     if (doubleEating === true) {
       possibleMoves = piece.CheckDoubleEating([piece.row, piece.col]);
     } else {
-      // Otherwise - 'eatingMoves' per piece:
       possibleMoves = piece.getEatingMoves();
     }
+
     // 2. If the player clicks on a cell that is not in the options - the 'EatingMove' did not take place - return false:
     if (possibleMoves[0] !== undefined) {
       for (const possibleMove of possibleMoves) {
@@ -172,6 +168,7 @@ class Game {
   }
 
   tryDoNormalMove(piece, row, col) {
+    // The function checks if the player has made an noraml move:
     let possibleMoves = piece.getNormaleMoves();
     for (const possibleMove of possibleMoves) {
       if (possibleMove[0] === row && possibleMove[1] === col) {
@@ -193,6 +190,7 @@ class Game {
   }
 
   oneTimeExplanatoryMessage() {
+    // Message Explanation of "double eating". This message appears only once!
     if (oneTimeMessage === undefined) {
       let doubleEatingMessage = document.querySelector("#double-message");
       table.appendChild(doubleEatingMessage);

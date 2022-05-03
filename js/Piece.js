@@ -121,7 +121,7 @@ class Piece {
         const col = this.col + directionCol[j] * i;
         if (boardData.isEmpty(row, col)) {
           result.push([row, col]);
-        } else if (!boardData.isEmpty(row, col)) {
+        } else {
           break;
         }
       }
@@ -129,26 +129,27 @@ class Piece {
     return result;
   }
 
-  CheckDoubleEating(cell) {
+  CheckDoubleEating() {
     // This function will work even if the 'doubleEating' is of a queen and even if it is of a pawn:
     let nextEating = [];
     let directions = [-1, 1];
     for (const numberLoop1 of directions) {
       for (const numberLoop2 of directions) {
         if (
-          boardData.isEnemy(cell[0] + numberLoop1, cell[1] + numberLoop2) &&
+          boardData.isEnemy(this.row + numberLoop1, this.col + numberLoop2) &&
           boardData.isEmpty(
-            cell[0] + numberLoop1 * 2,
-            cell[1] + numberLoop2 * 2
+            this.row + numberLoop1 * 2,
+            this.col + numberLoop2 * 2
           )
         ) {
           nextEating.push([
-            cell[0] + numberLoop1 * 2,
-            cell[1] + numberLoop2 * 2,
+            this.row + numberLoop1 * 2,
+            this.col + numberLoop2 * 2,
           ]);
         }
       }
     }
+
     return nextEating;
   }
 }

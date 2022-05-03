@@ -74,7 +74,7 @@ class Game {
     // 1. If we are in a state of 'doubleEating' the possibleMoves are 'doubleEating'. else - 'getEatingMoves'
     let possibleMoves;
     if (doubleEating === true) {
-      possibleMoves = piece.CheckDoubleEating([piece.row, piece.col]);
+      possibleMoves = piece.CheckDoubleEating();
     } else {
       possibleMoves = piece.getEatingMoves();
     }
@@ -88,7 +88,7 @@ class Game {
           this.makeTheMove(piece, row, col);
 
           // 4. Check if now he has the option to "doubleEating":
-          let double = piece.CheckDoubleEating([piece.row, piece.col]);
+          let double = piece.CheckDoubleEating();
           if (double[0] !== undefined) {
             double = piece.filteredMoves(double);
             if (double[0] !== undefined) {

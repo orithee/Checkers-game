@@ -5,9 +5,9 @@ class Game {
   }
 
   Conditions() {
-    // Remove the alerts "notYourTurn","youMustEat" :
-    notYourTurn.remove();
-    youMustEat.remove();
+    // Remove the alerts "NOT_YOUR_TURN","YOU_MUST_EAT" :
+    NOT_YOUR_TURN.remove();
+    YOU_MUST_EAT.remove();
 
     // If the game is over - exit the function:
     if (game.winner !== undefined) {
@@ -24,9 +24,9 @@ class Game {
     if (piece !== undefined) {
       // 2. If this is not the turn of the player who clicked - exit the function:
       if (this.currentPlayer !== piece.player) {
-        notYourTurn.classList.add("notYourTurn");
-        notYourTurn.textContent = "This is not your turn";
-        table.appendChild(notYourTurn);
+        NOT_YOUR_TURN.classList.add("not-tour-turn");
+        NOT_YOUR_TURN.textContent = "This is not your turn";
+        table.appendChild(NOT_YOUR_TURN);
         selectedPiece = undefined;
         return;
       }
@@ -37,7 +37,7 @@ class Game {
       if (possibleMoves[0] === undefined) {
         possibleMoves = piece.getNormaleMoves();
       }
-      for (let possibleMove of possibleMoves) {
+      for (const possibleMove of possibleMoves) {
         const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
         cell.classList.add("possible-move");
       }
@@ -92,8 +92,8 @@ class Game {
           if (double[0] !== undefined) {
             double = piece.filteredMoves(double);
             if (double[0] !== undefined) {
-              for (let option of double) {
-                let cell = table.rows[option[0]].cells[option[1]];
+              for (const option of double) {
+                const cell = table.rows[option[0]].cells[option[1]];
                 cell.classList.add("possible-move");
               }
               doubleEating = true;
@@ -113,7 +113,7 @@ class Game {
 
   makeTheMove(piece, row, col) {
     // 1. Change the piece location + his image:
-    let pieceImage = table.rows[piece.row].cells[piece.col].innerHTML;
+    const pieceImage = table.rows[piece.row].cells[piece.col].innerHTML;
     table.rows[piece.row].cells[piece.col].innerHTML = "";
     table.rows[row].cells[col].innerHTML = pieceImage;
 
@@ -142,7 +142,7 @@ class Game {
     // Checks if the current player has the option to make a eating move:
     // 1. Get an array of this player pieces:
     let piecesThisPlayer = [];
-    for (let piece of boardData.pieces) {
+    for (const piece of boardData.pieces) {
       if (piece.player === this.currentPlayer) {
         piecesThisPlayer.push(piece);
       }
@@ -150,7 +150,7 @@ class Game {
 
     // 2. Get an array of "possible eating moves" of each piece of this player:
     let possibleMovesThisTurn = [];
-    for (let piece of piecesThisPlayer) {
+    for (const piece of piecesThisPlayer) {
       possibleMovesThisTurn = possibleMovesThisTurn.concat(
         piece.getEatingMoves()
       );
@@ -160,9 +160,9 @@ class Game {
     if (possibleMovesThisTurn[0] === undefined) {
       return false;
     } else {
-      youMustEat.classList.add("must-eat");
-      youMustEat.textContent = "You Must Eat!";
-      table.appendChild(youMustEat);
+      YOU_MUST_EAT.classList.add("must-eat");
+      YOU_MUST_EAT.textContent = "You Must Eat!";
+      table.appendChild(YOU_MUST_EAT);
       return true;
     }
   }
@@ -192,7 +192,7 @@ class Game {
   oneTimeExplanatoryMessage() {
     // Message Explanation of "double eating". This message appears only once!
     if (oneTimeMessage === undefined) {
-      let doubleEatingMessage = document.querySelector("#double-message");
+      const doubleEatingMessage = document.querySelector("#double-message");
       table.appendChild(doubleEatingMessage);
       doubleEatingMessage.classList.remove("hiden");
       doubleEatingMessage.addEventListener("click", () => {

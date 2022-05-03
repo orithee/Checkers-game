@@ -99,7 +99,7 @@ img {
     outline: solid 3px black;
 }
 
-.notYourTurn {
+.not-tour-turn {
     position: fixed;
     left: 50%;
     top: 2%;

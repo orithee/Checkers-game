@@ -56,7 +56,7 @@ class Piece {
     }
 
     let Sides = [-1, 1];
-    for (let side of Sides) {
+    for (const side of Sides) {
       if (
         boardData.isEnemy(this.row + direction, this.col + side) &&
         boardData.isEmpty(this.row + direction * 2, this.col + side * 2)
@@ -75,8 +75,8 @@ class Piece {
 
     for (let j = 0; j < directionRow.length; j++) {
       for (let i = 1; i < BOARD_SIZE; i++) {
-        let row = this.row + directionRow[j] * i;
-        let col = this.col + directionCol[j] * i;
+        const row = this.row + directionRow[j] * i;
+        const col = this.col + directionCol[j] * i;
         if (!boardData.isEmpty(row, col)) {
           if (
             boardData.isEnemy(row, col) &&
@@ -112,13 +112,13 @@ class Piece {
   getQueenNormalMoves() {
     // Get the possible normal moves of 'Queen piece':
     let result = [];
-    let directionRow = [-1, -1, 1, 1];
-    let directionCol = [-1, 1, -1, 1];
+    const directionRow = [-1, -1, 1, 1];
+    const directionCol = [-1, 1, -1, 1];
 
     for (let j = 0; j < directionRow.length; j++) {
       for (let i = 1; i < BOARD_SIZE; i++) {
-        let row = this.row + directionRow[j] * i;
-        let col = this.col + directionCol[j] * i;
+        const row = this.row + directionRow[j] * i;
+        const col = this.col + directionCol[j] * i;
         if (boardData.isEmpty(row, col)) {
           result.push([row, col]);
         } else if (!boardData.isEmpty(row, col)) {
@@ -133,8 +133,8 @@ class Piece {
     // This function will work even if the 'doubleEating' is of a queen and even if it is of a pawn:
     let nextEating = [];
     let directions = [-1, 1];
-    for (let numberLoop1 of directions) {
-      for (let numberLoop2 of directions) {
+    for (const numberLoop1 of directions) {
+      for (const numberLoop2 of directions) {
         if (
           boardData.isEnemy(cell[0] + numberLoop1, cell[1] + numberLoop2) &&
           boardData.isEmpty(

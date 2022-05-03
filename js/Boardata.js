@@ -7,20 +7,20 @@ class BoardData {
     // Create list of pieces (24 total):
     let piecesArray = [];
     let col = [0, 2, 4, 6];
-    for (let number of col) {
-      piecesArray.push(new Piece(0, number + 1, PAWN, WHITE_PLAYER));
-      piecesArray.push(new Piece(1, number, PAWN, WHITE_PLAYER));
+    for (const number of col) {
+      // piecesArray.push(new Piece(0, number + 1, PAWN, WHITE_PLAYER));
+      // piecesArray.push(new Piece(1, number, PAWN, WHITE_PLAYER));
       piecesArray.push(new Piece(2, number + 1, PAWN, WHITE_PLAYER));
       piecesArray.push(new Piece(5, number, PAWN, BLACK_PLAYER));
       piecesArray.push(new Piece(6, number + 1, PAWN, BLACK_PLAYER));
-      piecesArray.push(new Piece(7, number, PAWN, BLACK_PLAYER));
+      piecesArray.push(new Piece(1, number, PAWN, BLACK_PLAYER));
     }
     return piecesArray;
   }
 
   addImages() {
     // Add pieces images to board:
-    for (let piece of this.pieces) {
+    for (const piece of this.pieces) {
       const cell = table.rows[piece.row].cells[piece.col];
       const image = document.createElement("img");
       image.src = "images/" + piece.player + ".png";
@@ -91,7 +91,7 @@ class BoardData {
   checkingIfGameOver() {
     // 1. Get an array of the next player's pieces:
     let piecesNextPlayer = [];
-    for (let piece of this.pieces) {
+    for (const piece of this.pieces) {
       if (piece.player === game.currentPlayer) {
         piecesNextPlayer.push(piece);
       }
@@ -99,7 +99,7 @@ class BoardData {
 
     // 2. Get an array of possible moves of each piece of the player who played last:
     let possibleMovesThisTurn = [];
-    for (let piece of piecesNextPlayer) {
+    for (const piece of piecesNextPlayer) {
       possibleMovesThisTurn = possibleMovesThisTurn.concat(
         piece.getEatingMoves()
       );
@@ -120,13 +120,13 @@ class BoardData {
     if (game.winner !== undefined) {
       // We have a winner! Finish the game:
       const winner = game.winner.charAt(0).toUpperCase() + game.winner.slice(1);
-      winnerPopup.classList.add("victory-jumps");
-      winnerPopup.textContent = winner + " player wins!";
-      table.appendChild(winnerPopup);
-      newGame.classList.add("new-game");
-      newGame.textContent = "🔄 New - game";
-      table.appendChild(newGame);
-      newGame.addEventListener("click", () => this.Restart());
+      WINNER_POPUP.classList.add("victory-jumps");
+      WINNER_POPUP.textContent = winner + " player wins!";
+      table.appendChild(WINNER_POPUP);
+      NEW_GAME.classList.add("new-game");
+      NEW_GAME.textContent = "🔄 New - game";
+      table.appendChild(NEW_GAME);
+      NEW_GAME.addEventListener("click", () => this.Restart());
     }
   }
 
@@ -134,8 +134,8 @@ class BoardData {
     // Reset the data - a new game:
     table.remove();
     initGame();
-    winnerPopup.classList.remove();
-    newGame.classList.remove();
+    WINNER_POPUP.classList.remove();
+    NEW_GAME.classList.remove();
     document.querySelector(".player-1").classList.add("player--active");
     document.querySelector(".player-2").classList.remove("player--active");
   }

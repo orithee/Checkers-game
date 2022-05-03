@@ -5,16 +5,16 @@ const BLACK_PLAYER = "black";
 const PAWN = "pawn";
 const QUEEN = "queen";
 
-const notYourTurn = document.createElement("div");
-const youMustEat = document.createElement("div");
-const winnerPopup = document.createElement("div");
-const newGame = document.createElement("button");
+const NOT_YOUR_TURN = document.createElement("div");
+const YOU_MUST_EAT = document.createElement("div");
+const WINNER_POPUP = document.createElement("div");
+const NEW_GAME = document.createElement("button");
 
+let doubleEating = false;
 let selectedPiece;
 let table;
 let game;
 let boardData;
-let doubleEating = false;
 let oneTimeMessage;
 
 function onCellClick(row, col) {

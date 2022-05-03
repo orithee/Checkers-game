@@ -49,37 +49,37 @@ class BoardData {
   }
 
   removePiece(row, col) {
-    // If there is a piece in the cell - remove it ! :
+    // Remove the enemy piece from the board ! :
+    table.rows[row].cells[col].innerHTML = "";
     for (let i = 0; i < this.pieces.length; i++) {
       const piece = this.pieces[i];
       if (piece.row === row && piece.col === col) {
         this.pieces.splice(i, 1);
-        return piece;
       }
     }
   }
 
   enemyPieceLocation(piece, row, col, possibleMove) {
-    // Remove the enemy piece - The following code will work on all possible types of eating in the game :
-
+    // Find the exact location of the piece eaten :
     if (possibleMove[0] > piece.row && possibleMove[1] > piece.col) {
-      table.rows[row - 1].cells[col - 1].innerHTML = "";
-      boardData.removePiece(row - 1, col - 1);
+      row -= 1;
+      col -= 1;
     }
 
     if (possibleMove[0] > piece.row && piece.col > possibleMove[1]) {
-      table.rows[row - 1].cells[col + 1].innerHTML = "";
-      boardData.removePiece(row - 1, col + 1);
+      row -= 1;
+      col += 1;
     }
 
     if (piece.row > possibleMove[0] && piece.col > possibleMove[1]) {
-      table.rows[row + 1].cells[col + 1].innerHTML = "";
-      boardData.removePiece(row + 1, col + 1);
+      row += 1;
+      col += 1;
     }
     if (piece.row > possibleMove[0] && possibleMove[1] > piece.col) {
-      table.rows[row + 1].cells[col - 1].innerHTML = "";
-      boardData.removePiece(row + 1, col - 1);
+      row += 1;
+      col -= 1;
     }
+    this.removePiece(row, col);
   }
 
   isEmpty(row, col) {

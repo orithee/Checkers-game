@@ -153,7 +153,7 @@ class Piece {
     // Check if he has the option to "doubleEating":
     if (nextEating[0] !== undefined) {
       let double = this.filteredMoves(nextEating);
-      if (double !== undefined) {
+      if (double[0] !== undefined) {
         for (const option of double) {
           const cell = table.rows[option[0]].cells[option[1]];
           cell.classList.add("possible-move");

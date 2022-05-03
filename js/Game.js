@@ -88,19 +88,7 @@ class Game {
           this.makeTheMove(piece, row, col);
 
           // 4. Check if now he has the option to "doubleEating":
-          let double = piece.CheckDoubleEating();
-          if (double[0] !== undefined) {
-            double = piece.filteredMoves(double);
-            if (double[0] !== undefined) {
-              for (const option of double) {
-                const cell = table.rows[option[0]].cells[option[1]];
-                cell.classList.add("possible-move");
-              }
-              doubleEating = true;
-              this.oneTimeExplanatoryMessage();
-              return true;
-            }
-          }
+          if (piece.CheckDoubleEating() !== undefined) return true;
           doubleEating = false;
           this.changeCurrentPlayer();
           return true;

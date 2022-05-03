@@ -133,23 +133,37 @@ class Piece {
     // This function will work even if the 'doubleEating' is of a queen and even if it is of a pawn:
     let nextEating = [];
     let directions = [-1, 1];
-    for (const numberLoop1 of directions) {
-      for (const numberLoop2 of directions) {
+    for (const loopNumber1 of directions) {
+      for (const loopNumber2 of directions) {
         if (
-          boardData.isEnemy(this.row + numberLoop1, this.col + numberLoop2) &&
+          boardData.isEnemy(this.row + loopNumber1, this.col + loopNumber2) &&
           boardData.isEmpty(
-            this.row + numberLoop1 * 2,
-            this.col + numberLoop2 * 2
+            this.row + loopNumber1 * 2,
+            this.col + loopNumber2 * 2
           )
         ) {
           nextEating.push([
-            this.row + numberLoop1 * 2,
-            this.col + numberLoop2 * 2,
+            this.row + loopNumber1 * 2,
+            this.col + loopNumber2 * 2,
           ]);
         }
       }
     }
 
-    return nextEating;
+    // Check if he has the option to "doubleEating":
+    if (nextEating[0] !== undefined) {
+      let double = this.filteredMoves(nextEating);
+      if (double !== undefined) {
+        for (const option of double) {
+          const cell = table.rows[option[0]].cells[option[1]];
+          cell.classList.add("possible-move");
+        }
+        doubleEating = true;
+        game.oneTimeExplanatoryMessage();
+        return double;
+      }
+    }
+
+    return undefined;
   }
 }

@@ -8,12 +8,12 @@ class BoardData {
     let piecesArray = [];
     let col = [0, 2, 4, 6];
     for (const number of col) {
-      // piecesArray.push(new Piece(0, number + 1, PAWN, WHITE_PLAYER));
-      // piecesArray.push(new Piece(1, number, PAWN, WHITE_PLAYER));
+      piecesArray.push(new Piece(0, number + 1, PAWN, WHITE_PLAYER));
+      piecesArray.push(new Piece(1, number, PAWN, WHITE_PLAYER));
       piecesArray.push(new Piece(2, number + 1, PAWN, WHITE_PLAYER));
       piecesArray.push(new Piece(5, number, PAWN, BLACK_PLAYER));
       piecesArray.push(new Piece(6, number + 1, PAWN, BLACK_PLAYER));
-      piecesArray.push(new Piece(1, number, PAWN, BLACK_PLAYER));
+      piecesArray.push(new Piece(7, number, PAWN, BLACK_PLAYER));
     }
     return piecesArray;
   }

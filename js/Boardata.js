@@ -59,7 +59,7 @@ class BoardData {
     }
   }
 
-  removeEnemyPiece(piece, row, col, possibleMove) {
+  enemyPieceLocation(piece, row, col, possibleMove) {
     // Remove the enemy piece - The following code will work on all possible types of eating in the game :
 
     if (possibleMove[0] > piece.row && possibleMove[1] > piece.col) {
@@ -121,7 +121,7 @@ class BoardData {
       piecesNextPlayer[0] === undefined ||
       possibleMovesThisTurn[0] === undefined
     ) {
-      game.changePlayer();
+      game.changeCurrentPlayer();
       game.winner = game.currentPlayer;
       this.endOfTheGame();
     }
@@ -134,7 +134,6 @@ class BoardData {
       winnerPopup.classList.add("victory-jumps");
       winnerPopup.textContent = winner + " player wins!";
       table.appendChild(winnerPopup);
-      // newGame.id = "new-game";
       newGame.classList.add("new-game");
       newGame.textContent = "🔄 New - game";
       table.appendChild(newGame);
@@ -143,6 +142,7 @@ class BoardData {
   }
 
   Restart() {
+    // Reset the data - a new game:
     table.remove();
     initGame();
     winnerPopup.classList.remove();

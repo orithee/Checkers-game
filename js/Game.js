@@ -56,10 +56,10 @@ class Game {
     // 1. If he try possible move of eatingMove - its okay, do it.
     if (this.tryDoEatingMove(piece, row, col)) return true;
 
-    // 2. If he was in a 'doubleEating' state and did not eat - 'changePlayer' and exit the function:
+    // 2. If he was in a 'doubleEating' state and did not eat - 'changeCurrentPlayer' and exit the function:
     if (doubleEating === true) {
       doubleEating = false;
-      this.changePlayer();
+      this.changeCurrentPlayer();
       return true;
     }
 
@@ -87,8 +87,8 @@ class Game {
     if (possibleMoves[0] !== undefined) {
       for (const possibleMove of possibleMoves) {
         if (possibleMove[0] === row && possibleMove[1] === col) {
-          // 3.a. There is a legal move, so do this:
-          boardData.removeEnemyPiece(piece, row, col, possibleMove);
+          // 3.a. There is a legal move, so find 'enemyPieceLocation' and remove it -'removePiece' :
+          boardData.enemyPieceLocation(piece, row, col, possibleMove);
 
           // 3.b. Change the piece location + Check if now he has the option to "doubleEating":
           if (this.makeTheMove(piece, row, col)) {
@@ -101,11 +101,12 @@ class Game {
                   cell.classList.add("possible-move");
                 }
                 doubleEating = true;
+                this.oneTimeExplanatoryMessage();
                 return true;
               }
             }
             doubleEating = false;
-            this.changePlayer();
+            this.changeCurrentPlayer();
             return true;
           }
         }
@@ -179,7 +180,7 @@ class Game {
       if (possibleMove[0] === row && possibleMove[1] === col) {
         // There is a legal move, so do this - Change the piece location + Finish this turn:
         if (this.makeTheMove(piece, row, col)) {
-          this.changePlayer();
+          this.changeCurrentPlayer();
           return true;
         }
       }
@@ -187,10 +188,22 @@ class Game {
     return false;
   }
 
-  changePlayer() {
+  changeCurrentPlayer() {
     this.currentPlayer =
       this.currentPlayer === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
     document.querySelector(".player-1").classList.toggle("player--active");
     document.querySelector(".player-2").classList.toggle("player--active");
+  }
+
+  oneTimeExplanatoryMessage() {
+    if (oneTimeMessage === undefined) {
+      let doubleEatingMessage = document.querySelector("#double-message");
+      table.appendChild(doubleEatingMessage);
+      doubleEatingMessage.classList.remove("hiden");
+      doubleEatingMessage.addEventListener("click", () => {
+        doubleEatingMessage.classList.add("hiden");
+      });
+      oneTimeMessage = "dont show again";
+    }
   }
 }

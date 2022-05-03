@@ -15,6 +15,7 @@ let table;
 let game;
 let boardData;
 let doubleEating = false;
+let oneTimeMessage;
 
 function onCellClick(row, col) {
   if (!game.Conditions()) return;

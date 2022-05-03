@@ -33,7 +33,8 @@ class BoardData {
     // Clear all previous possible moves + previous selected cell:
     for (let i = 0; i < BOARD_SIZE; i++) {
       for (let j = 0; j < BOARD_SIZE; j++) {
-        table.rows[i].cells[j].classList.remove("possible-move");
+        if ((j + i) % 2 !== 0)
+          table.rows[i].cells[j].classList.remove("possible-move");
         table.rows[i].cells[j].classList.remove("selected");
       }
     }

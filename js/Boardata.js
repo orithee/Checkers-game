@@ -50,8 +50,20 @@ class BoardData {
   }
 
   removePieceEaten(piece, row, col, possibleMove) {
-    row += (possibleMove[0] - piece.row) / 2;
-    col += (possibleMove[1] - piece.col) / 2;
+    //1. Find the exact location of the piece eaten :
+    if (possibleMove[0] > piece.row && possibleMove[1] > piece.col) {
+      row -= 1;
+      col -= 1;
+    } else if (possibleMove[0] > piece.row && piece.col > possibleMove[1]) {
+      row -= 1;
+      col += 1;
+    } else if (piece.row > possibleMove[0] && piece.col > possibleMove[1]) {
+      row += 1;
+      col += 1;
+    } else if (piece.row > possibleMove[0] && possibleMove[1] > piece.col) {
+      row += 1;
+      col -= 1;
+    }
 
     //2. Remove the piece eaten from the board :
     table.rows[row].cells[col].innerHTML = '';

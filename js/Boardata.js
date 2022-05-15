@@ -22,8 +22,8 @@ class BoardData {
     // Add pieces images to board:
     for (const piece of this.pieces) {
       const cell = table.rows[piece.row].cells[piece.col];
-      const image = document.createElement("img");
-      image.src = "images/" + piece.player + ".png";
+      const image = document.createElement('img');
+      image.src = 'images/' + piece.player + '.png';
       image.draggable = false;
       cell.appendChild(image);
     }
@@ -34,8 +34,8 @@ class BoardData {
     for (let i = 0; i < BOARD_SIZE; i++) {
       for (let j = 0; j < BOARD_SIZE; j++) {
         if ((j + i) % 2 !== 0)
-          table.rows[i].cells[j].classList.remove("possible-move");
-        table.rows[i].cells[j].classList.remove("selected");
+          table.rows[i].cells[j].classList.remove('possible-move');
+        table.rows[i].cells[j].classList.remove('selected');
       }
     }
   }
@@ -54,7 +54,7 @@ class BoardData {
     col += (possibleMove[1] - piece.col) / 2;
 
     //2. Remove the piece eaten from the board :
-    table.rows[row].cells[col].innerHTML = "";
+    table.rows[row].cells[col].innerHTML = '';
     for (let i = 0; i < this.pieces.length; i++) {
       const piece = this.pieces[i];
       if (piece.row === row && piece.col === col) {
@@ -109,13 +109,13 @@ class BoardData {
     if (game.winner !== undefined) {
       // We have a winner! Finish the game:
       const winner = game.winner.charAt(0).toUpperCase() + game.winner.slice(1);
-      WINNER_POPUP.classList.add("victory-jumps");
-      WINNER_POPUP.textContent = winner + " player wins!";
+      WINNER_POPUP.classList.add('victory-jumps');
+      WINNER_POPUP.textContent = winner + ' player wins!';
       table.appendChild(WINNER_POPUP);
-      NEW_GAME.classList.add("new-game");
-      NEW_GAME.textContent = "🔄 New - game";
+      NEW_GAME.classList.add('new-game');
+      NEW_GAME.textContent = '🔄 New - game';
       table.appendChild(NEW_GAME);
-      NEW_GAME.addEventListener("click", () => this.Restart());
+      NEW_GAME.addEventListener('click', () => this.Restart());
     }
   }
 
@@ -125,7 +125,7 @@ class BoardData {
     initGame();
     WINNER_POPUP.classList.remove();
     NEW_GAME.classList.remove();
-    document.querySelector(".player-1").classList.add("player--active");
-    document.querySelector(".player-2").classList.remove("player--active");
+    document.querySelector('.player-1').classList.add('player--active');
+    document.querySelector('.player-2').classList.remove('player--active');
   }
 }
